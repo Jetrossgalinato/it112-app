@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -12,36 +12,32 @@ export default function Header() {
           </Link>
         </div>
         <nav className="hidden md:flex gap-6">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
           >
             Home
           </Link>
-          <Link 
-            href="#" 
+          <Link
+            href="#"
             className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
           >
             About
           </Link>
-          <Link 
-            href="#" 
+          <Link
+            href="#"
             className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
           >
             Services
           </Link>
-          <Link 
-            href="#" 
+          <Link
+            href="#"
             className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
           >
             Contact
           </Link>
         </nav>
-        <div className="flex items-center gap-4">
-            <button className="hidden rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200 md:block">
-              Get Started
-            </button>
-        </div>
+        <div className="flex items-center gap-4"></div>
       </div>
     </header>
   );
