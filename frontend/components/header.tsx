@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { CircleFadingArrowUpIcon } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Header() {
   return (
@@ -41,9 +41,7 @@ export default function Header() {
           </Link>
         </nav>
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon">
-            <CircleFadingArrowUpIcon />
-          </Button>
+          <ThemeToggle />
           <Separator orientation="vertical" className="text-foreground" />
           <Button asChild>
             <Link href="/login">Get Started</Link>
