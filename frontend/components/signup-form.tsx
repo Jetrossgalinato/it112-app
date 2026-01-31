@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +12,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 export function SignupForm({
   className,
@@ -97,15 +100,20 @@ export function SignupForm({
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="bg-muted relative hidden md:block"
+          >
             <Image
               src="/auth2.png"
               width={400}
               height={400}
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-70 transition-all duration-500"
+              className="absolute inset-0 h-full w-full object-cover dark:brightness-70"
             />
-          </div>
+          </motion.div>
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
