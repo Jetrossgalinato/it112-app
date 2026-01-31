@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { TypographyH1, TypographyMuted } from "@/components/typography";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -22,7 +23,7 @@ export default function Home() {
         <div className="flex min-h-full flex-col items-center justify-center">
           <section className="container max-w-7xl mx-auto w-full px-4 md:px-6 py-12">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2 items-center">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
@@ -31,7 +32,10 @@ export default function Home() {
                 <div className="space-y-2">
                   <TypographyH1>
                     Effortlessly Record and Manage Your{" "}
-                    <span className="text-blue-600 dark:text-blue-400"> Daily Logs </span>
+                    <span className="text-blue-600 dark:text-blue-400">
+                      {" "}
+                      Daily Logs{" "}
+                    </span>
                   </TypographyH1>
                   <TypographyMuted>
                     This website empowers you to easily input your logs, keep
@@ -43,25 +47,29 @@ export default function Home() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Button size="lg" className="rounded-full shadow-lg shadow-blue-500/20">
-                      Get Started
-                    </Button>
+                    <Link href="/login">
+                      <Button
+                        size="lg"
+                        className="shadow-lg shadow-blue-500/20"
+                      >
+                        Get Started
+                      </Button>
+                    </Link>
                   </motion.div>
                 </div>
               </motion.div>
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
                 className="flex items-center justify-center relative"
               >
-                 {/* Optional: Add a subtle glow behind the image too */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-violet-500/10 rounded-full blur-2xl -z-10" />
                 <Image
                   src="/logging.png"
                   alt="Hero"
-                  width={600}
-                  height={600}
+                  width={550}
+                  height={550}
                   className="overflow-hidden rounded-2xl object-contain object-center drop-shadow-2xl"
                   priority
                 />
