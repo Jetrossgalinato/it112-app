@@ -7,10 +7,17 @@ from app.database import get_db, engine, Base
 from app.api import auth
 from app.models import user  # Import models to ensure they are registered with Base
 
+from contextlib import asynccontextmanager
+
 # Create tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print(f"Server starting. CORS origins: {origins}")
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 # Configure CORS
 origins = [
