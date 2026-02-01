@@ -31,7 +31,7 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
         setAlert(null);
       }, 5000);
     },
-    []
+    [],
   );
 
   const hideAlert = useCallback(() => {
@@ -47,13 +47,13 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="fixed top-4 right-4 z-50 w-full max-w-sm"
+            className="fixed top-20 right-4 z-50 w-full max-w-sm"
           >
-            <Alert variant={alert.type === "success" ? "default" : alert.type}>
+            <Alert variant={alert.type}>
               {alert.type === "destructive" ? (
-                <AlertCircle className="h-4 w-4" />
+                <XCircle className="h-4 w-4" />
               ) : alert.type === "success" ? (
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <CheckCircle2 className="h-4 w-4" />
               ) : (
                 <AlertCircle className="h-4 w-4" />
               )}
@@ -62,8 +62,8 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
                   (alert.type === "destructive"
                     ? "Error"
                     : alert.type === "success"
-                    ? "Success"
-                    : "Notification")}
+                      ? "Success"
+                      : "Notification")}
               </AlertTitle>
               <AlertDescription>{alert.message}</AlertDescription>
             </Alert>

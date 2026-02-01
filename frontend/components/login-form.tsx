@@ -52,6 +52,7 @@ export function LoginForm({
         return;
       }
 
+      showAlert("Login successful!", "success");
       router.push("/");
     } catch (err) {
       showAlert("An error occurred", "destructive");
