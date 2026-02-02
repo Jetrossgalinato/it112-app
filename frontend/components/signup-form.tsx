@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/alert-context";
+import { HidePassword } from "./hide-password";
 
 export function SignupForm({
   className,
@@ -28,6 +29,8 @@ export function SignupForm({
     password: "",
     confirmPassword: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +94,7 @@ export function SignupForm({
                   Enter your email below to create your account
                 </p>
               </div>
-              
+
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
@@ -111,25 +114,41 @@ export function SignupForm({
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input
-                      id="password"
-                      type="password"
-                      required
-                      value={formData.password}
-                      onChange={handleChange}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        required
+                        value={formData.password}
+                        onChange={handleChange}
+                      />
+                      <HidePassword
+                        showPassword={showPassword}
+                        toggleShowPassword={() =>
+                          setShowPassword(!showPassword)
+                        }
+                      />
+                    </div>
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">
                       Confirm Password
                     </FieldLabel>
-                    <Input
-                      id="confirm-password"
-                      type="password"
-                      required
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="confirm-password"
+                        type={showPasswordConfirm ? "text" : "password"}
+                        required
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                      />
+                      <HidePassword
+                        showPassword={showPasswordConfirm}
+                        toggleShowPassword={() =>
+                          setShowPasswordConfirm(!showPasswordConfirm)
+                        }
+                      />
+                    </div>
                   </Field>
                 </Field>
                 <FieldDescription>
