@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/alert-context";
+import { HidePassword } from "./hide-password";
 
 export function LoginForm({
   className,
@@ -27,6 +28,7 @@ export function LoginForm({
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,15 +97,21 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                  />
+                  <HidePassword
+                    showPassword={showPassword}
+                    toggleShowPassword={() => setShowPassword(!showPassword)}
+                  />
+                </div>
               </Field>
               <Field>
                 <Button type="submit" disabled={loading}>
