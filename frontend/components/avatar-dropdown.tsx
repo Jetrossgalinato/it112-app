@@ -11,13 +11,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { useAlert } from "@/context/alert-context";
 
 export function AvatarDropdown() {
+  const { showAlert } = useAlert();
   const router = useRouter();
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     window.dispatchEvent(new Event("auth-change"));
+    showAlert("Logged out successfully", "success");
     router.push("/");
   };
 
