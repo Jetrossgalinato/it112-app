@@ -54,6 +54,10 @@ export function LoginForm({
         return;
       }
 
+      const data = await response.json();
+      localStorage.setItem("user", JSON.stringify(data));
+      window.dispatchEvent(new Event("auth-change"));
+
       showAlert("Login successful!", "success");
       router.push("/");
     } catch (err) {

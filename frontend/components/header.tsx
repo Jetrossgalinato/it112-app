@@ -3,7 +3,7 @@ import { LoaderPinwheel } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TypographyMedium } from "./typography";
-import { Button } from "@/components/ui/button";
+import { UserAuthButton } from "./user-auth-button";
 
 export default function Header() {
   return (
@@ -43,9 +43,7 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <Separator orientation="vertical" className="h-6" />
-          <Link href="/login">
-            <Button size="sm">Get Started</Button>
-          </Link>
+          <UserAuthButton />
         </div>
       </div>
     </header>
