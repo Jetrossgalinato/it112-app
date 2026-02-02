@@ -14,21 +14,23 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/alert-context";
+import { HidePassword } from "./hide-password";
+import { useAuth } from "@/hooks/use-auth";
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter();
+  const { register, loading } = useAuth();
   const { showAlert } = useAlert();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -40,43 +42,13 @@ export function SignupForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
       showAlert("Passwords do not match", "destructive");
-      setLoading(false);
       return;
     }
 
-    try {
-      const response = await fetch("http://localhost:8000/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.detail || "Registration failed");
-      }
-
-      // Successful registration
-      showAlert("Account created successfully", "success");
-      router.push("/login?registered=true");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        showAlert(err.message, "destructive");
-      } else {
-        showAlert("An unexpected error occurred", "destructive");
-      }
-    } finally {
-      setLoading(false);
-    }
+    await register(formData.email, formData.password);
   };
 
   return (
@@ -91,7 +63,7 @@ export function SignupForm({
                   Enter your email below to create your account
                 </p>
               </div>
-              
+
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
@@ -111,25 +83,41 @@ export function SignupForm({
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input
-                      id="password"
-                      type="password"
-                      required
-                      value={formData.password}
-                      onChange={handleChange}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        required
+                        value={formData.password}
+                        onChange={handleChange}
+                      />
+                      <HidePassword
+                        showPassword={showPassword}
+                        toggleShowPassword={() =>
+                          setShowPassword(!showPassword)
+                        }
+                      />
+                    </div>
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">
                       Confirm Password
                     </FieldLabel>
-                    <Input
-                      id="confirm-password"
-                      type="password"
-                      required
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="confirm-password"
+                        type={showPasswordConfirm ? "text" : "password"}
+                        required
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                      />
+                      <HidePassword
+                        showPassword={showPasswordConfirm}
+                        toggleShowPassword={() =>
+                          setShowPasswordConfirm(!showPasswordConfirm)
+                        }
+                      />
+                    </div>
                   </Field>
                 </Field>
                 <FieldDescription>

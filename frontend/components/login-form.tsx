@@ -14,50 +14,23 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAlert } from "@/context/alert-context";
+import { HidePassword } from "./hide-password";
+import { useAuth } from "@/hooks/use-auth";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter();
-  const { showAlert } = useAlert();
+  const { login, loading } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await fetch("http://localhost:8000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        showAlert(data.detail || "An error occurred", "destructive");
-        setLoading(false);
-        return;
-      }
-
-      showAlert("Login successful!", "success");
-      router.push("/");
-    } catch (err) {
-      showAlert("An error occurred", "destructive");
-      setLoading(false);
-    }
+    await login(formData.email, formData.password);
   };
 
   return (
@@ -95,15 +68,21 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                  />
+                  <HidePassword
+                    showPassword={showPassword}
+                    toggleShowPassword={() => setShowPassword(!showPassword)}
+                  />
+                </div>
               </Field>
               <Field>
                 <Button type="submit" disabled={loading}>
