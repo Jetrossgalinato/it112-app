@@ -18,13 +18,16 @@ export function useAuth() {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         },
-        body: JSON.stringify({ email, password }),
-      });
+      );
 
       if (!response.ok) {
         const data: AuthResponse = await response.json();
@@ -38,7 +41,7 @@ export function useAuth() {
       window.dispatchEvent(new Event("auth-change"));
 
       showAlert("Login successful!", "success");
-      router.push("/");
+      router.push("/logs");
     } catch (err) {
       console.error(err);
       showAlert("An error occurred", "destructive");
@@ -49,13 +52,16 @@ export function useAuth() {
   const register = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         },
-        body: JSON.stringify({ email, password }),
-      });
+      );
 
       if (!response.ok) {
         const data: AuthResponse = await response.json();
