@@ -14,15 +14,15 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/alert-context";
 import { HidePassword } from "./hide-password";
+import { useAuth } from "@/hooks/use-auth";
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter();
+  const { register, loading } = useAuth();
   const { showAlert } = useAlert();
   const [formData, setFormData] = useState({
     email: "",
@@ -31,7 +31,6 @@ export function SignupForm({
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -43,43 +42,13 @@ export function SignupForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
       showAlert("Passwords do not match", "destructive");
-      setLoading(false);
       return;
     }
 
-    try {
-      const response = await fetch("http://localhost:8000/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.detail || "Registration failed");
-      }
-
-      // Successful registration
-      showAlert("Account created successfully", "success");
-      router.push("/login?registered=true");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        showAlert(err.message, "destructive");
-      } else {
-        showAlert("An unexpected error occurred", "destructive");
-      }
-    } finally {
-      setLoading(false);
-    }
+    await register(formData.email, formData.password);
   };
 
   return (
