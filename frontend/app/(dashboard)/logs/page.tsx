@@ -2,6 +2,7 @@
 
 import { TypographyH3, TypographyMuted } from "@/components/typography";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -29,6 +30,9 @@ export default function LogsPage() {
       <div>
         <TypographyH3>Logs Page</TypographyH3>
         <TypographyMuted>Write your logs for the day!</TypographyMuted>
+      </div>
+      <div className="flex justify-end">
+        <Button disabled={loading}>Add Log</Button>
       </div>
 
       <Card>
