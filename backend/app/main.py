@@ -4,8 +4,8 @@ from typing import Union
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db, engine, Base
-from app.api import auth
-from app.models import user  # Import models to ensure they are registered with Base
+from app.api import auth, logs
+from app.models import user, log  # Import models to ensure they are registered with Base
 
 from contextlib import asynccontextmanager
 
@@ -35,6 +35,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(logs.router, prefix="/logs", tags=["logs"])
 
 @app.get("/")
 def read_root():
