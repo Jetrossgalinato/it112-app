@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -14,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAlert } from "@/context/alert-context";
 import { useAddLog } from "@/hooks/use-logs";
+import { ChevronDown } from "lucide-react";
 
 interface AddLogModalProps {
   isOpen: boolean;
@@ -44,8 +51,7 @@ export function AddLogModal({
       setActivity("");
       setDuration("");
       setStatus("");
-    } catch (error) {
-      // Error is logged in the hook
+    } catch {
       showAlert("Failed to add log. Please try again.", "destructive");
     }
   };
@@ -91,14 +97,26 @@ export function AddLogModal({
               <Label htmlFor="status" className="text-right">
                 Status
               </Label>
-              <Input
-                id="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="col-span-3"
-                placeholder="e.g. Completed"
-                required
-              />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="col-span-3 justify-between"
+                  >
+                    {status || "Select Status"}
+                    <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[200px]" align="start">
+                  {["Not Started", "Pending", "In Progress", "Completed"].map(
+                    (s) => (
+                      <DropdownMenuItem key={s} onSelect={() => setStatus(s)}>
+                        {s}
+                      </DropdownMenuItem>
+                    )
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
           <DialogFooter>
