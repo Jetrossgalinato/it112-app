@@ -10,42 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
-
-// Define the Log interface matching the backend schema
-interface Log {
-  id: number;
-  activity: string;
-  duration: string;
-  status: string;
-  timestamp: string;
-}
+import { useLogs } from "@/hooks/use-logs";
 
 export default function LogsPage() {
-  const [logs, setLogs] = useState<Log[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        // Adjust the URL if your backend is running on a different port/host
-        const response = await fetch("http://localhost:8000/logs/");
-        if (!response.ok) {
-          throw new Error("Failed to fetch logs");
-        }
-        const data = await response.json();
-        setLogs(data);
-      } catch (err) {
-        console.error("Error fetching logs:", err);
-        setError("Failed to load logs. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLogs();
-  }, []);
+  const { logs, loading, error } = useLogs();
 
   // Helper to format timestamp into Time and Date
   const formatTime = (timestamp: string) => {
