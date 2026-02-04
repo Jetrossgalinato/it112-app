@@ -1,0 +1,19 @@
+from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
+
+class LogBase(BaseModel):
+    activity: str
+    duration: str
+    status: str
+    timestamp: Optional[datetime] = None
+
+class LogCreate(LogBase):
+    pass
+
+class Log(LogBase):
+    id: int
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True
