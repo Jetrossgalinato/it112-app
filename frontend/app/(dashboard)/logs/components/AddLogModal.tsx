@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAlert } from "@/context/alert-context";
+import { useAddLog } from "@/hooks/use-logs";
 
 interface AddLogModalProps {
   isOpen: boolean;
@@ -28,29 +29,14 @@ export function AddLogModal({
   const [activity, setActivity] = useState("");
   const [duration, setDuration] = useState("");
   const [status, setStatus] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { addLog, loading } = useAddLog();
   const { showAlert } = useAlert();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/logs/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          activity,
-          duration,
-          status,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to add log");
-      }
+      await addLog(activity, duration, status);
 
       onLogAdded();
       onOpenChange(false);
@@ -59,10 +45,8 @@ export function AddLogModal({
       setDuration("");
       setStatus("");
     } catch (error) {
-      console.error("Error adding log:", error);
+      // Error is logged in the hook
       showAlert("Failed to add log. Please try again.", "destructive");
-    } finally {
-      setLoading(false);
     }
   };
 
