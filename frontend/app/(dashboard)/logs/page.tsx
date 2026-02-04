@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { TypographyH3, TypographyMuted } from "@/components/typography";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -12,9 +14,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useLogs } from "@/hooks/use-logs";
+import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
 
 export default function LogsPage() {
-  const { logs, loading, error } = useLogs();
+  const { logs, loading, error, refreshLogs } = useLogs();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Helper to format timestamp into Time and Date
   const formatTime = (timestamp: string) => {
@@ -27,12 +31,20 @@ export default function LogsPage() {
 
   return (
     <div className="p-4 space-y-4">
+      <AddLogModal
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onLogAdded={refreshLogs}
+      />
       <div>
         <TypographyH3>Logs Page</TypographyH3>
         <TypographyMuted>Write your logs for the day!</TypographyMuted>
-      </div>
-      <div className="flex justify-end">
-        <Button disabled={loading}>Add Log</Button>
+        <div className="flex justify-end">
+          <Button onClick={() => setIsModalOpen(true)}>
+            <Plus className=" h-4 w-4" />
+            Add Log
+          </Button>
+        </div>
       </div>
 
       <Card>

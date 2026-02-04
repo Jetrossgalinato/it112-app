@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export interface Log {
   id: number;
@@ -13,25 +13,27 @@ export function useLogs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/logs/");
-        if (!response.ok) {
-          throw new Error("Failed to fetch logs");
-        }
-        const data = await response.json();
-        setLogs(data);
-      } catch (err) {
-        console.error("Error fetching logs:", err);
-        setError("Failed to load logs. Please try again later.");
-      } finally {
-        setLoading(false);
+  const fetchLogs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:8000/logs/");
+      if (!response.ok) {
+        throw new Error("Failed to fetch logs");
       }
-    };
-
-    fetchLogs();
+      const data = await response.json();
+      setLogs(data);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching logs:", err);
+      setError("Failed to load logs. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { logs, loading, error };
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
+
+  return { logs, loading, error, refreshLogs: fetchLogs };
 }
