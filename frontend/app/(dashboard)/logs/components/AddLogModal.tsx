@@ -21,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { useAlert } from "@/context/alert-context";
 import { useAddLog } from "@/hooks/use-logs";
 import { ChevronDown } from "lucide-react";
+import { getStatusColor } from "@/lib/helpers";
 
 interface AddLogModalProps {
   isOpen: boolean;
@@ -103,7 +104,18 @@ export function AddLogModal({
                     variant="outline"
                     className="col-span-3 justify-between"
                   >
-                    {status || "Select Status"}
+                    {status ? (
+                      <div className="flex items-center">
+                        <span
+                          className={`mr-2 h-2 w-2 rounded-full ${getStatusColor(
+                            status,
+                          )}`}
+                        />
+                        {status}
+                      </div>
+                    ) : (
+                      "Select Status"
+                    )}
                     <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -111,9 +123,14 @@ export function AddLogModal({
                   {["Not Started", "Pending", "In Progress", "Completed"].map(
                     (s) => (
                       <DropdownMenuItem key={s} onSelect={() => setStatus(s)}>
+                        <span
+                          className={`mr-2 h-2 w-2 rounded-full ${getStatusColor(
+                            s,
+                          )}`}
+                        />
                         {s}
                       </DropdownMenuItem>
-                    )
+                    ),
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
