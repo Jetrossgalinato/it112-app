@@ -4,6 +4,7 @@ import { useState } from "react";
 import { TypographyH3, TypographyMuted } from "@/components/typography";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
 import {
   Table,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { useLogs } from "@/hooks/use-logs";
 import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
+import { getStatusColor } from "@/lib/helpers";
 
 export default function LogsPage() {
   const { logs, loading, error, refreshLogs } = useLogs();
@@ -77,7 +79,11 @@ export default function LogsPage() {
                     <TableCell>{formatTime(log.timestamp)}</TableCell>
                     <TableCell>{log.activity}</TableCell>
                     <TableCell>{log.duration}</TableCell>
-                    <TableCell className="text-right">{log.status}</TableCell>
+                    <TableCell className="text-right">
+                      <Badge className={getStatusColor(log.status)}>
+                        {log.status}
+                      </Badge>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
