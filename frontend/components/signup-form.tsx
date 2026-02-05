@@ -25,6 +25,7 @@ export function SignupForm({
   const { register, loading } = useAuth();
   const { showAlert } = useAlert();
   const [formData, setFormData] = useState({
+    fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -48,7 +49,7 @@ export function SignupForm({
       return;
     }
 
-    await register(formData.email, formData.password);
+    await register(formData.email, formData.password, formData.fullName);
   };
 
   return (
@@ -63,6 +64,18 @@ export function SignupForm({
                   Enter your email below to create your account
                 </p>
               </div>
+
+              <Field>
+                <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="John Doe"
+                  required
+                  value={formData.fullName}
+                  onChange={handleChange}
+                />
+              </Field>
 
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
