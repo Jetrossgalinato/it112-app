@@ -111,7 +111,6 @@ export default function LogsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">ID</TableHead>
                   <TableHead>Time</TableHead>
                   <TableHead>Activity</TableHead>
                   <TableHead>Duration</TableHead>
@@ -122,7 +121,6 @@ export default function LogsPage() {
               <TableBody>
                 {logs.map((log) => (
                   <TableRow key={log.id}>
-                    <TableCell className="font-medium">{log.id}</TableCell>
                     <TableCell>{formatTime(log.timestamp)}</TableCell>
                     <TableCell>{log.activity}</TableCell>
                     <TableCell>{log.duration}</TableCell>
