@@ -5,7 +5,7 @@ import { TypographyH3, TypographyMuted } from "@/components/typography";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -69,7 +69,8 @@ export default function LogsPage() {
                   <TableHead>Time</TableHead>
                   <TableHead>Activity</TableHead>
                   <TableHead>Duration</TableHead>
-                  <TableHead className="text-right">Status</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -79,10 +80,28 @@ export default function LogsPage() {
                     <TableCell>{formatTime(log.timestamp)}</TableCell>
                     <TableCell>{log.activity}</TableCell>
                     <TableCell>{log.duration}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell>
                       <Badge className={getStatusColor(log.status)}>
                         {log.status}
                       </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => console.log("Edit", log.id)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => console.log("Delete", log.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
