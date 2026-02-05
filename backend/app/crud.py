@@ -35,3 +35,25 @@ def create_log(db: Session, log: log_schemas.LogCreate):
     db.commit()
     db.refresh(db_log)
     return db_log
+
+def get_log(db: Session, log_id: int):
+    return db.query(log_models.Log).filter(log_models.Log.id == log_id).first()
+
+def update_log(db: Session, log_id: int, log: log_schemas.LogCreate):
+    db_log = get_log(db, log_id)
+    if db_log:
+        db_log.activity = log.activity
+        db_log.duration = log.duration
+        db_log.status = log.status
+        if log.timestamp:
+            db_log.timestamp = log.timestamp
+        db.commit()
+        db.refresh(db_log)
+    return db_log
+
+def delete_log(db: Session, log_id: int):
+    db_log = get_log(db, log_id)
+    if db_log:
+        db.delete(db_log)
+        db.commit()
+    return db_log

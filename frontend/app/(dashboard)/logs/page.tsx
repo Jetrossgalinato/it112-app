@@ -14,13 +14,45 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useLogs } from "@/hooks/use-logs";
+import { useLogs, Log } from "@/hooks/use-logs";
 import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
+import { EditLogDialog } from "@/app/(dashboard)/logs/components/EditDialog";
+import { DeleteDialog } from "@/components/delete-dialog";
 import { getStatusColor } from "@/lib/helpers";
+import { useAlert } from "@/context/alert-context";
 
 export default function LogsPage() {
-  const { logs, loading, error, refreshLogs } = useLogs();
+  const { logs, loading, error, refreshLogs, deleteLog } = useLogs();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedLog, setSelectedLog] = useState<Log | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const { showAlert } = useAlert();
+
+  const handleEdit = (log: Log) => {
+    setSelectedLog(log);
+    setIsEditOpen(true);
+  };
+
+  const handleDelete = (log: Log) => {
+    setSelectedLog(log);
+    setIsDeleteOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedLog) return;
+    setDeleteLoading(true);
+    try {
+      await deleteLog(selectedLog.id);
+      showAlert("Log deleted successfully", "success");
+      setIsDeleteOpen(false);
+    } catch {
+      showAlert("Failed to delete log", "destructive");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   // Helper to format timestamp into Time and Date
   const formatTime = (timestamp: string) => {
@@ -37,6 +69,20 @@ export default function LogsPage() {
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
         onLogAdded={refreshLogs}
+      />
+      <EditLogDialog
+        isOpen={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        log={selectedLog}
+        onLogUpdated={refreshLogs}
+      />
+      <DeleteDialog
+        isOpen={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        onConfirm={confirmDelete}
+        title="Delete Log"
+        description="Are you sure you want to delete this log? This action cannot be undone."
+        loading={deleteLoading}
       />
       <div>
         <TypographyH3>Logs Page</TypographyH3>
@@ -90,14 +136,14 @@ export default function LogsPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => console.log("Edit", log.id)}
+                          onClick={() => handleEdit(log)}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => console.log("Delete", log.id)}
+                          onClick={() => handleDelete(log)}
                         >
                           <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
