@@ -57,7 +57,10 @@ export default function LogsPage() {
   // Helper to format timestamp into Time and Date
   const formatTime = (timestamp: string) => {
     if (!timestamp) return "-";
-    return new Date(timestamp).toLocaleTimeString([], {
+    return new Date(timestamp).toLocaleString([], {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -111,7 +114,7 @@ export default function LogsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Time</TableHead>
+                  <TableHead>Date & Time</TableHead>
                   <TableHead>Activity</TableHead>
                   <TableHead>Duration</TableHead>
                   <TableHead>Status</TableHead>
