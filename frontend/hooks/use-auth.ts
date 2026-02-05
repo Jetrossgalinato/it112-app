@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/alert-context";
 
@@ -10,10 +10,42 @@ interface AuthResponse {
   [key: string]: any;
 }
 
+interface User {
+  name: string;
+  email: string;
+  avatar: string;
+}
+
 export function useAuth() {
   const router = useRouter();
   const { showAlert } = useAlert();
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUser = () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          const parsed = JSON.parse(storedUser);
+          setUser({
+            name: parsed.full_name || parsed.email,
+            email: parsed.email,
+            avatar: "",
+          });
+        } catch (err) {
+          console.error(err);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+    window.addEventListener("auth-change", fetchUser);
+    return () => window.removeEventListener("auth-change", fetchUser);
+  }, []);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -49,7 +81,18 @@ export function useAuth() {
     }
   };
 
-  const register = async (email: string, password: string) => {
+  const logout = () => {
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("auth-change"));
+    showAlert("Logged out successfully", "success");
+    router.push("/login");
+  };
+
+  const register = async (
+    email: string,
+    password: string,
+    fullName: string,
+  ) => {
     setLoading(true);
     try {
       const response = await fetch(
@@ -59,7 +102,7 @@ export function useAuth() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email, password, full_name: fullName }),
         },
       );
 
@@ -81,5 +124,5 @@ export function useAuth() {
     }
   };
 
-  return { login, register, loading };
+  return { login, register, logout, user, loading };
 }

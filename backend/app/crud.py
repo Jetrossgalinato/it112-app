@@ -15,14 +15,14 @@ def get_user_by_email(db: Session, email: str):
 
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = pwd_context.hash(user.password)
-    db_user = models.User(email=user.email, hashed_password=hashed_password)
+    db_user = models.User(email=user.email, hashed_password=hashed_password, full_name=user.full_name)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
 def get_logs(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(log_models.Log).offset(skip).limit(limit).all()
+    return db.query(log_models.Log).order_by(log_models.Log.id.desc()).offset(skip).limit(limit).all()
 
 def create_log(db: Session, log: log_schemas.LogCreate):
     db_log = log_models.Log(
@@ -34,4 +34,26 @@ def create_log(db: Session, log: log_schemas.LogCreate):
     db.add(db_log)
     db.commit()
     db.refresh(db_log)
+    return db_log
+
+def get_log(db: Session, log_id: int):
+    return db.query(log_models.Log).filter(log_models.Log.id == log_id).first()
+
+def update_log(db: Session, log_id: int, log: log_schemas.LogCreate):
+    db_log = get_log(db, log_id)
+    if db_log:
+        db_log.activity = log.activity
+        db_log.duration = log.duration
+        db_log.status = log.status
+        if log.timestamp:
+            db_log.timestamp = log.timestamp
+        db.commit()
+        db.refresh(db_log)
+    return db_log
+
+def delete_log(db: Session, log_id: int):
+    db_log = get_log(db, log_id)
+    if db_log:
+        db.delete(db_log)
+        db.commit()
     return db_log
