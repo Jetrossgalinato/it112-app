@@ -8,4 +8,5 @@ class User(Base):
     full_name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    avatar = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
