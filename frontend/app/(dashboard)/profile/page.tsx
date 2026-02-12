@@ -18,6 +18,7 @@ import { TypographyH3, TypographyMuted } from "@/components/typography";
 
 export default function ProfilePage() {
   const { user, updateProfile, loading } = useAuth();
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,7 +28,6 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       setFormData((prev) => {
         // Only update if values are different to avoid unnecessary renders/loops
         if (
@@ -45,12 +45,42 @@ export default function ProfilePage() {
         };
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const uploadData = new FormData();
+    uploadData.append("file", file);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/upload-avatar`,
+        {
+          method: "POST",
+          body: uploadData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const data = await response.json();
+      setFormData((prev) => ({ ...prev, avatar: data.url }));
+    } catch (error) {
+      console.error(error);
+      // Ideally show an error toast here
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,18 +118,24 @@ export default function ProfilePage() {
               </AvatarFallback>
             </Avatar>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="avatar">Avatar URL</Label>
+              <Label htmlFor="avatar">Avatar Image</Label>
               <Input
-                type="text"
+                type="file"
                 id="avatar"
                 name="avatar"
-                placeholder="https://example.com/avatar.png"
-                value={formData.avatar}
-                onChange={handleChange}
+                accept="image/*"
+                onChange={handleFileChange}
+                disabled={uploading}
               />
-              <p className="text-xs text-muted-foreground">
-                Enter a URL for your profile picture.
-              </p>
+              {uploading ? (
+                <p className="text-xs text-muted-foreground animate-pulse">
+                  Uploading...
+                </p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Upload a picture for your profile.
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
