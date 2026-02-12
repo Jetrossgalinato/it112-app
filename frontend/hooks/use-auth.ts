@@ -11,6 +11,7 @@ interface AuthResponse {
 }
 
 interface User {
+  id: number;
   name: string;
   email: string;
   avatar: string;
@@ -29,9 +30,10 @@ export function useAuth() {
         try {
           const parsed = JSON.parse(storedUser);
           setUser({
+            id: parsed.id,
             name: parsed.full_name || parsed.email,
             email: parsed.email,
-            avatar: "",
+            avatar: parsed.avatar || "",
           });
         } catch (err) {
           console.error(err);
@@ -124,5 +126,45 @@ export function useAuth() {
     }
   };
 
-  return { login, register, logout, user, loading };
+  const updateProfile = async (data: Partial<User> & { password?: string }) => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/profile/${user.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            full_name: data.name,
+            email: data.email,
+            avatar: data.avatar,
+            password: data.password,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        const errorData: AuthResponse = await response.json();
+        throw new Error(errorData.detail || "Update failed");
+      }
+
+      const updatedUser = await response.json();
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      window.dispatchEvent(new Event("auth-change"));
+      showAlert("Profile updated successfully", "success");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        showAlert(err.message, "destructive");
+      } else {
+        showAlert("An unexpected error occurred", "destructive");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { login, register, logout, updateProfile, user, loading };
 }
