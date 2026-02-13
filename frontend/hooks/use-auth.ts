@@ -21,6 +21,7 @@ export function useAuth() {
   const router = useRouter();
   const { showAlert } = useAlert();
   const [loading, setLoading] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export function useAuth() {
       } else {
         setUser(null);
       }
+      setInitializing(false);
     };
 
     fetchUser();
@@ -166,5 +168,5 @@ export function useAuth() {
     }
   };
 
-  return { login, register, logout, updateProfile, user, loading };
+  return { login, register, logout, updateProfile, user, loading, initializing };
 }
