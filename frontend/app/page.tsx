@@ -7,8 +7,10 @@ import { TypographyH1, TypographyMuted } from "@/components/typography";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Home() {
+  const { user } = useAuth();
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       <Header />
@@ -47,7 +49,7 @@ export default function Home() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Link href="/login">
+                    <Link href={user ? "/logs" : "/login"}>
                       <Button
                         size="lg"
                         className="shadow-lg shadow-blue-500/20"
