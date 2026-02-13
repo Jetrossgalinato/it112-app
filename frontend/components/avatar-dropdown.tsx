@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, ClipboardList } from "lucide-react";
 
 export function AvatarDropdown() {
   const router = useRouter();
@@ -51,6 +51,10 @@ export function AvatarDropdown() {
           <DropdownMenuItem onClick={() => router.push("/profile")}>
             <User className="mr-2 h-4 w-4" />
             Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/logs")}>
+            <ClipboardList className="mr-2 h-4 w-4" />
+            Logs
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
