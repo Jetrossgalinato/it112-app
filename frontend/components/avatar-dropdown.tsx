@@ -7,42 +7,56 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-import { useAlert } from "@/context/alert-context";
+import { useAuth } from "@/hooks/use-auth";
+import { LogOut, User } from "lucide-react";
 
 export function AvatarDropdown() {
-  const { showAlert } = useAlert();
   const router = useRouter();
+  const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.dispatchEvent(new Event("auth-change"));
-    showAlert("Logged out successfully", "success");
-    router.push("/");
-  };
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "CN";
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full">
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src={user?.avatar} alt={user?.name || "User"} />
+            <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-32">
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user?.name}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user?.email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Billing</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/profile")}>
+            <User className="mr-2 h-4 w-4" />
+            Profile
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+          <DropdownMenuItem variant="destructive" onClick={logout}>
+            <LogOut className="mr-2 h-4 w-4" />
             Log out
           </DropdownMenuItem>
         </DropdownMenuGroup>
