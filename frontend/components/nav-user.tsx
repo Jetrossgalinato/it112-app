@@ -18,6 +18,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/use-auth";
+import { House } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
@@ -28,6 +30,7 @@ export function NavUser({
     avatar: string;
   };
 }) {
+  const router = useRouter();
   const { isMobile } = useSidebar();
   const { logout } = useAuth();
   const initials =
@@ -81,6 +84,11 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push("/")}>
+              <House />
+              Home
+            </DropdownMenuItem>
+
             <DropdownMenuItem onClick={logout}>
               <LogOut />
               Log out

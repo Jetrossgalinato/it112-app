@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AlertProvider } from "@/context/alert-context";
+import { AuthGuard } from "@/components/auth-guard";
 
 export const metadata: Metadata = {
   title: "IT 112 App",
@@ -22,7 +23,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AlertProvider>{children}</AlertProvider>
+          <AlertProvider>
+            <AuthGuard>{children}</AuthGuard>
+          </AlertProvider>
         </ThemeProvider>
       </body>
     </html>
