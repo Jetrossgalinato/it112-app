@@ -48,13 +48,13 @@ export function AvatarDropdown() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push("/profile")}>
-            <User className="mr-2 h-4 w-4" />
-            Profile
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/logs")}>
             <ClipboardList className="mr-2 h-4 w-4" />
             Logs
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/profile")}>
+            <User className="mr-2 h-4 w-4" />
+            Profile
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
