@@ -15,7 +15,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const isAuthRoute = ["/login", "/register"].some((route) =>
       pathname.startsWith(route),
     );
-    const isProtectedRoute = pathname.startsWith("/logs");
+    const isProtectedRoute = pathname.startsWith("/logs") || pathname.startsWith("/profile");
 
     if (user && isAuthRoute) {
       router.push("/");
@@ -28,7 +28,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const isAuthRoute = ["/login", "/register"].some((route) =>
       pathname.startsWith(route),
     );
-    const isProtectedRoute = pathname.startsWith("/logs");
+    const isProtectedRoute = pathname.startsWith("/logs") || pathname.startsWith("/profile");
 
     if (isAuthRoute || isProtectedRoute) {
       return (
@@ -44,7 +44,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const isAuthRoute = ["/login", "/register"].some((route) =>
       pathname.startsWith(route),
     );
-    const isProtectedRoute = pathname.startsWith("/logs");
+    const isProtectedRoute = pathname.startsWith("/logs") || pathname.startsWith("/profile");
 
     if (user && isAuthRoute) return null;
     if (!user && isProtectedRoute) return null;

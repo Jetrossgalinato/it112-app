@@ -46,7 +46,15 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
 
 @router.put("/profile/{user_id}", response_model=schemas.User)
 def update_profile(user_id: int, user_update: schemas.UserUpdate, db: Session = Depends(get_db)):
-    db_user = crud.update_user(db=db, user_id=user_id, user_update=user_update)
+    db_user = crud.get_user(db, user_id)
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+
+    if user_update.password:
+        if not user_update.old_password:
+            raise HTTPException(status_code=400, detail="Old password is required to set a new password")
+        if not crud.verify_password(user_update.old_password, db_user.hashed_password):
+            raise HTTPException(status_code=400, detail="Incorrect old password")
+
+    updated_user = crud.update_user(db=db, user_id=user_id, user_update=user_update)
+    return updated_user
