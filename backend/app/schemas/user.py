@@ -7,6 +7,7 @@ class UserUpdate(BaseModel):
     full_name: str | None = None
     email: EmailStr | None = None
     password: str | None = None
+    old_password: str | None = None
     avatar: str | None = None
 
 class UserCreate(UserBase):

@@ -128,7 +128,9 @@ export function useAuth() {
     }
   };
 
-  const updateProfile = async (data: Partial<User> & { password?: string }) => {
+  const updateProfile = async (
+    data: Partial<User> & { password?: string; old_password?: string },
+  ) => {
     if (!user) return;
     setLoading(true);
     try {
@@ -144,6 +146,7 @@ export function useAuth() {
             email: data.email,
             avatar: data.avatar,
             password: data.password,
+            old_password: data.old_password,
           }),
         },
       );

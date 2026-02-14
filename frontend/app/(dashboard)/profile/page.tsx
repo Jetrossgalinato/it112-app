@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { useAlert } from "@/context/alert-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,12 +19,15 @@ import { TypographyH3, TypographyMuted } from "@/components/typography";
 
 export default function ProfilePage() {
   const { user, updateProfile, loading } = useAuth();
+  const { showAlert } = useAlert();
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     avatar: "",
+    oldPassword: "",
     password: "",
+    confirmPassword: "",
   });
 
   useEffect(() => {
@@ -85,13 +89,30 @@ export default function ProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (formData.password && formData.password !== formData.confirmPassword) {
+      showAlert("New passwords do not match", "destructive");
+      return;
+    }
+
+    if (formData.password && !formData.oldPassword) {
+      showAlert("Old password is required to set a new password", "destructive");
+      return;
+    }
+
     await updateProfile({
       name: formData.name,
       email: formData.email,
       avatar: formData.avatar,
+      old_password: formData.oldPassword || undefined,
       password: formData.password || undefined,
     });
-    setFormData((prev) => ({ ...prev, password: "" })); // Clear password after save
+    setFormData((prev) => ({
+      ...prev,
+      oldPassword: "",
+      password: "",
+      confirmPassword: "",
+    })); // Clear passwords after save
   };
 
   if (!user) {
@@ -103,14 +124,14 @@ export default function ProfilePage() {
       <TypographyH3>Profile</TypographyH3>
       <TypographyMuted>Update your profile information here.</TypographyMuted>
       <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 lg:col-span-3">
+        <Card className="col-span-4 lg:col-span-3 flex flex-col">
           <CardHeader>
             <CardTitle>Your Avatar</CardTitle>
             <CardDescription>
               This is your public display image.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center gap-4">
+          <CardContent className="flex flex-col items-center justify-center gap-4 flex-1">
             <Avatar className="h-32 w-32">
               <AvatarImage src={formData.avatar} alt={formData.name} />
               <AvatarFallback className="text-4xl">
@@ -170,6 +191,17 @@ export default function ProfilePage() {
                 />
               </div>
               <div className="grid gap-2">
+                <Label htmlFor="oldPassword">Old Password</Label>
+                <Input
+                  id="oldPassword"
+                  name="oldPassword"
+                  type="password"
+                  placeholder="Enter your current password"
+                  value={formData.oldPassword}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="grid gap-2">
                 <Label htmlFor="password">New Password</Label>
                 <Input
                   id="password"
@@ -177,6 +209,17 @@ export default function ProfilePage() {
                   type="password"
                   placeholder="Leave blank to keep current password"
                   value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your new password"
+                  value={formData.confirmPassword}
                   onChange={handleChange}
                 />
               </div>

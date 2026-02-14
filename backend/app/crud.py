@@ -10,6 +10,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
+def get_user(db: Session, user_id: int):
+    return db.query(models.User).filter(models.User.id == user_id).first()
+
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
@@ -22,11 +25,14 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    db_user = get_user(db, user_id)
     if not db_user:
         return None
     
     update_data = user_update.dict(exclude_unset=True)
+    if "old_password" in update_data:
+        del update_data["old_password"]
+
     if "password" in update_data and update_data["password"]:
         update_data["hashed_password"] = pwd_context.hash(update_data["password"])
         del update_data["password"]
