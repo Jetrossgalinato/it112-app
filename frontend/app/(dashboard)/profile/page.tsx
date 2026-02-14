@@ -15,12 +15,18 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2 } from "lucide-react";
+import { HidePassword } from "@/components/hide-password";
 import { TypographyH3, TypographyMuted } from "@/components/typography";
 
 export default function ProfilePage() {
   const { user, updateProfile, loading } = useAuth();
   const { showAlert } = useAlert();
   const [uploading, setUploading] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    old: false,
+    new: false,
+    confirm: false,
+  });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,6 +35,10 @@ export default function ProfilePage() {
     password: "",
     confirmPassword: "",
   });
+
+  const togglePasswordVisibility = (field: keyof typeof showPassword) => {
+    setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
 
   useEffect(() => {
     if (user) {
@@ -192,36 +202,57 @@ export default function ProfilePage() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="oldPassword">Old Password</Label>
-                <Input
-                  id="oldPassword"
-                  name="oldPassword"
-                  type="password"
-                  placeholder="Enter your current password"
-                  value={formData.oldPassword}
-                  onChange={handleChange}
-                />
+                <div className="relative">
+                  <Input
+                    id="oldPassword"
+                    name="oldPassword"
+                    type={showPassword.old ? "text" : "password"}
+                    placeholder="Enter your current password"
+                    value={formData.oldPassword}
+                    onChange={handleChange}
+                    className="pr-10"
+                  />
+                  <HidePassword
+                    showPassword={showPassword.old}
+                    toggleShowPassword={() => togglePasswordVisibility("old")}
+                  />
+                </div>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">New Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Leave blank to keep current password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword.new ? "text" : "password"}
+                    placeholder="Leave blank to keep current password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="pr-10"
+                  />
+                  <HidePassword
+                    showPassword={showPassword.new}
+                    toggleShowPassword={() => togglePasswordVisibility("new")}
+                  />
+                </div>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  placeholder="Confirm your new password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showPassword.confirm ? "text" : "password"}
+                    placeholder="Confirm your new password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="pr-10"
+                  />
+                  <HidePassword
+                    showPassword={showPassword.confirm}
+                    toggleShowPassword={() => togglePasswordVisibility("confirm")}
+                  />
+                </div>
               </div>
               <div className="flex justify-end">
                 <Button type="submit" disabled={loading}>
