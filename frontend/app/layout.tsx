@@ -5,7 +5,7 @@ import { AlertProvider } from "@/context/alert-context";
 import { AuthGuard } from "@/components/auth-guard";
 
 export const metadata: Metadata = {
-  title: "IT 112 App",
+  title: "JetLog",
   description: "A modern web application built with Next.js and Tailwind CSS.",
 };
 
