@@ -2,30 +2,20 @@
 
 import { useState } from "react";
 import { TypographyH3, TypographyMuted } from "@/components/typography";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, FileDown } from "lucide-react";
+import { Plus, FileDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useLogs, Log } from "@/hooks/use-logs";
 import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
 import { EditLogDialog } from "@/app/(dashboard)/logs/components/EditDialog";
 import { DeleteDialog } from "@/components/delete-dialog";
-import { getStatusColor } from "@/lib/helpers";
 import { useAlert } from "@/context/alert-context";
+import { LogsTable } from "@/app/(dashboard)/logs/components/LogsTable";
 
 export default function LogsPage() {
   const { logs, loading, error, refreshLogs, deleteLog } = useLogs();
@@ -125,18 +115,6 @@ export default function LogsPage() {
     }
   };
 
-  // Helper to format timestamp into Time and Date
-  const formatTime = (timestamp: string) => {
-    if (!timestamp) return "-";
-    return new Date(timestamp).toLocaleString([], {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
     <div className="p-4 space-y-4">
       <AddLogModal
@@ -185,65 +163,13 @@ export default function LogsPage() {
         </div>
       </div>
 
-      <Card>
-        <CardContent>
-          {loading ? (
-            <div className="py-4 text-center text-sm text-muted-foreground">
-              Loading logs...
-            </div>
-          ) : error ? (
-            <div className="py-4 text-center text-sm text-red-500">{error}</div>
-          ) : logs.length === 0 ? (
-            <div className="py-4 text-center text-sm text-muted-foreground">
-              No logs found.
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date & Time</TableHead>
-                  <TableHead>Activity</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {logs.map((log) => (
-                  <TableRow key={log.id}>
-                    <TableCell>{formatTime(log.timestamp)}</TableCell>
-                    <TableCell>{log.activity}</TableCell>
-                    <TableCell>{log.duration}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(log.status)}>
-                        {log.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(log)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(log)}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      <LogsTable
+        logs={logs}
+        loading={loading}
+        error={error}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }
