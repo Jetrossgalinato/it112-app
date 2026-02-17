@@ -3,9 +3,10 @@
 import { useState, useMemo } from "react";
 import { TypographyH3, TypographyMuted } from "@/components/typography";
 import { Button } from "@/components/ui/button";
-import { Plus, Folder, ArrowLeft } from "lucide-react";
+import { Plus, Folder, ArrowLeft, FolderPlus } from "lucide-react";
 import { useLogs, Log } from "@/hooks/use-logs";
 import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
+import { AddFolderDialog } from "@/app/(dashboard)/logs/components/AddFolderDialog";
 import { EditLogDialog } from "@/app/(dashboard)/logs/components/EditDialog";
 import { DeleteDialog } from "@/components/delete-dialog";
 import { useAlert } from "@/context/alert-context";
@@ -16,11 +17,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 export default function LogsPage() {
   const { logs, loading, error, refreshLogs, deleteLog } = useLogs();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedLog, setSelectedLog] = useState<Log | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [targetFolder, setTargetFolder] = useState<string>("General");
   const { showAlert } = useAlert();
 
   const uniqueFolders = useMemo(() => {
@@ -63,7 +66,12 @@ export default function LogsPage() {
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
         onLogAdded={refreshLogs}
-        defaultFolder={selectedFolder || "General"}
+        defaultFolder={targetFolder}
+      />
+      <AddFolderDialog
+        isOpen={isFolderOpen}
+        onOpenChange={setIsFolderOpen}
+        onFolderAdded={refreshLogs}
       />
       <EditLogDialog
         isOpen={isEditOpen}
@@ -87,9 +95,11 @@ export default function LogsPage() {
             <TypographyH3>Logs Folders</TypographyH3>
             <TypographyMuted>Select a folder to view logs.</TypographyMuted>
             <div className="flex justify-end mt-4">
-              <Button onClick={() => setIsModalOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Log (New Folder)
+              <Button
+                onClick={() => setIsFolderOpen(true)}
+              >
+                <FolderPlus className="mr-2 h-4 w-4" />
+                New Folder
               </Button>
             </div>
           </div>
@@ -150,7 +160,12 @@ export default function LogsPage() {
             </div>
             <div className="flex justify-end gap-2">
               <Export logs={filteredLogs} />
-              <Button onClick={() => setIsModalOpen(true)}>
+              <Button
+                onClick={() => {
+                  setTargetFolder(selectedFolder || "General");
+                  setIsModalOpen(true);
+                }}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add Log
               </Button>
