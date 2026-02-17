@@ -53,6 +53,7 @@ def create_log(db: Session, log: log_schemas.LogCreate):
         activity=log.activity,
         duration=log.duration,
         status=log.status,
+        folder=log.folder,
         timestamp=log.timestamp
     )
     db.add(db_log)
@@ -69,6 +70,7 @@ def update_log(db: Session, log_id: int, log: log_schemas.LogCreate):
         db_log.activity = log.activity
         db_log.duration = log.duration
         db_log.status = log.status
+        db_log.folder = log.folder
         if log.timestamp:
             db_log.timestamp = log.timestamp
         db.commit()

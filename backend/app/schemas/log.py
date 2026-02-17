@@ -6,6 +6,7 @@ class LogBase(BaseModel):
     activity: str
     duration: str
     status: str
+    folder: Optional[str] = "General"
     timestamp: Optional[datetime] = None
 
 class LogCreate(LogBase):

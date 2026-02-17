@@ -5,6 +5,7 @@ export interface Log {
   activity: string;
   duration: string;
   status: string;
+  folder?: string;
   timestamp: string;
 }
 
@@ -84,7 +85,12 @@ export function useAddLog() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const addLog = async (activity: string, duration: string, status: string) => {
+  const addLog = async (
+    activity: string,
+    duration: string,
+    status: string,
+    folder: string = "General",
+  ) => {
     setLoading(true);
     setError(null);
     try {
@@ -97,6 +103,7 @@ export function useAddLog() {
           activity,
           duration,
           status,
+          folder,
         }),
       });
 

@@ -39,6 +39,7 @@ export function EditLogDialog({
   const [activity, setActivity] = useState("");
   const [duration, setDuration] = useState("");
   const [status, setStatus] = useState("");
+  const [folder, setFolder] = useState("");
   const { updateLog } = useLogs();
   const { showAlert } = useAlert();
   const [loading, setLoading] = useState(false);
@@ -48,6 +49,7 @@ export function EditLogDialog({
       setActivity(log.activity);
       setDuration(log.duration);
       setStatus(log.status);
+      setFolder(log.folder || "General");
     }
   }, [log]);
 
@@ -57,7 +59,7 @@ export function EditLogDialog({
 
     setLoading(true);
     try {
-      await updateLog(log.id, { activity, duration, status });
+      await updateLog(log.id, { activity, duration, status, folder });
       onLogUpdated();
       onOpenChange(false);
       showAlert("Log updated successfully!", "success");
@@ -79,6 +81,18 @@ export function EditLogDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="edit-folder" className="text-right">
+                Folder
+              </Label>
+              <Input
+                id="edit-folder"
+                value={folder}
+                onChange={(e) => setFolder(e.target.value)}
+                className="col-span-3"
+                required
+              />
+            </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-activity" className="text-right">
                 Activity

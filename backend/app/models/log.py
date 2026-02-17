@@ -9,4 +9,5 @@ class Log(Base):
     activity = Column(String, index=True)
     duration = Column(String)
     status = Column(String)
+    folder = Column(String, index=True, default="General")
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
