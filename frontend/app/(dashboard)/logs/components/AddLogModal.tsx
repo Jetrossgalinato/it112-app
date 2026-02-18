@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,38 +27,57 @@ interface AddLogModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onLogAdded: () => void;
+  defaultFolder?: string;
 }
 
 export function AddLogModal({
   isOpen,
   onOpenChange,
   onLogAdded,
+  defaultFolder = "General",
 }: AddLogModalProps) {
   const [activity, setActivity] = useState("");
   const [duration, setDuration] = useState("");
   const [status, setStatus] = useState("");
+  const [folder, setFolder] = useState(defaultFolder);
   const { addLog, loading } = useAddLog();
   const { showAlert } = useAlert();
+
+  // Update folder when defaultFolder changes
+  useEffect(() => {
+    setFolder(defaultFolder);
+  }, [defaultFolder]);
+
+  // Reset form when dialog closes
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setActivity("");
+      setDuration("");
+      setStatus("");
+    }
+    onOpenChange(open);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      await addLog(activity, duration, status);
+      // Ensure folder is not empty, default to "General" if user cleared it
+      const folderToSave = folder.trim() === "" ? "General" : folder;
+
+      await addLog(activity, duration, status, folderToSave);
 
       onLogAdded();
-      onOpenChange(false);
+      handleOpenChange(false);
       showAlert("Log added successfully!", "success");
-      setActivity("");
-      setDuration("");
-      setStatus("");
-    } catch {
+    } catch (error) {
+      console.error("Failed to add log:", error);
       showAlert("Failed to add log. Please try again.", "destructive");
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Daily Log</DialogTitle>
@@ -69,6 +88,18 @@ export function AddLogModal({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="folder" className="text-right">
+                Folder
+              </Label>
+              <Input
+                id="folder"
+                value={folder}
+                onChange={(e) => setFolder(e.target.value)}
+                className="col-span-3"
+                required
+              />
+            </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="activity" className="text-right">
                 Activity

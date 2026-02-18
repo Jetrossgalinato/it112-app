@@ -53,6 +53,7 @@ def create_log(db: Session, log: log_schemas.LogCreate):
         activity=log.activity,
         duration=log.duration,
         status=log.status,
+        folder=log.folder,
         timestamp=log.timestamp
     )
     db.add(db_log)
@@ -69,6 +70,7 @@ def update_log(db: Session, log_id: int, log: log_schemas.LogCreate):
         db_log.activity = log.activity
         db_log.duration = log.duration
         db_log.status = log.status
+        db_log.folder = log.folder
         if log.timestamp:
             db_log.timestamp = log.timestamp
         db.commit()
@@ -81,3 +83,7 @@ def delete_log(db: Session, log_id: int):
         db.delete(db_log)
         db.commit()
     return db_log
+
+def delete_logs_by_folder(db: Session, folder_name: str):
+    db.query(log_models.Log).filter(log_models.Log.folder == folder_name).delete()
+    db.commit()
