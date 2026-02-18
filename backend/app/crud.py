@@ -87,3 +87,9 @@ def delete_log(db: Session, log_id: int):
 def delete_logs_by_folder(db: Session, folder_name: str):
     db.query(log_models.Log).filter(log_models.Log.folder == folder_name).delete()
     db.commit()
+
+def update_logs_folder(db: Session, old_folder_name: str, new_folder_name: str):
+    db.query(log_models.Log).filter(log_models.Log.folder == old_folder_name).update(
+        {log_models.Log.folder: new_folder_name}
+    )
+    db.commit()

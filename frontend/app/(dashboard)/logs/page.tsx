@@ -2,10 +2,11 @@
 
 import { TypographyH3, TypographyMuted } from "@/components/typography";
 import { Button } from "@/components/ui/button";
-import { Plus, Folder, ArrowLeft, FolderPlus, Trash } from "lucide-react";
+import { Plus, ArrowLeft, FolderPlus, Trash, Pencil } from "lucide-react";
 import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
 import { AddFolderDialog } from "@/app/(dashboard)/logs/components/AddFolderDialog";
 import { EditLogDialog } from "@/app/(dashboard)/logs/components/EditDialog";
+import { EditFolderDialog } from "@/app/(dashboard)/logs/components/EditFolderDialog";
 import { DeleteDialog } from "@/components/delete-dialog";
 import { LogsTable } from "@/app/(dashboard)/logs/components/LogsTable";
 import { Export } from "@/app/(dashboard)/logs/components/Export";
@@ -29,10 +30,13 @@ export default function LogsPage() {
     setIsDeleteOpen,
     isDeleteFolderOpen,
     setIsDeleteFolderOpen,
+    isEditFolderOpen,
+    setIsEditFolderOpen,
     selectedLog,
     selectedFolder,
     setSelectedFolder,
     folderToDelete,
+    folderToEdit,
     targetFolder,
     setTargetFolder,
     deleteLoading,
@@ -40,8 +44,10 @@ export default function LogsPage() {
     handleEdit,
     handleDelete,
     handleDeleteFolder,
+    handleEditFolder,
     confirmDelete,
     confirmDeleteFolder,
+    confirmEditFolder,
   } = useLogsPage();
 
   return (
@@ -87,6 +93,12 @@ export default function LogsPage() {
         }
         loading={deleteLoading}
       />
+      <EditFolderDialog
+        isOpen={isEditFolderOpen}
+        onOpenChange={setIsEditFolderOpen}
+        currentFolderName={folderToEdit}
+        onFolderUpdated={confirmEditFolder}
+      />
 
       {!selectedFolder ? (
         // Folder View
@@ -120,12 +132,19 @@ export default function LogsPage() {
                       <Button
                         variant="ghost"
                         size="icon"
+                        className="h-6 w-6 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                        onClick={(e) => handleEditFolder(folder, e)}
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                         onClick={(e) => handleDeleteFolder(folder, e)}
                       >
                         <Trash className="h-3 w-3" />
                       </Button>
-                      <Folder className="h-4 w-4 text-muted-foreground" />
                     </div>
                   </CardHeader>
                   <CardContent>

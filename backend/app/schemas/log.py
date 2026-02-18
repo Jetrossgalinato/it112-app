@@ -18,3 +18,6 @@ class Log(LogBase):
 
     class Config:
         from_attributes = True
+
+class FolderUpdate(BaseModel):
+    new_folder_name: str

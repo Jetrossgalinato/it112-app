@@ -35,3 +35,8 @@ def delete_log(log_id: int, db: Session = Depends(get_db)):
 def delete_folder(folder_name: str, db: Session = Depends(get_db)):
     crud.delete_logs_by_folder(db=db, folder_name=folder_name)
     return None
+
+@router.put("/folder/{folder_name}", status_code=200)
+def update_folder(folder_name: str, folder_update: schemas.FolderUpdate, db: Session = Depends(get_db)):
+    crud.update_logs_folder(db=db, old_folder_name=folder_name, new_folder_name=folder_update.new_folder_name)
+    return {"message": "Folder updated successfully"}

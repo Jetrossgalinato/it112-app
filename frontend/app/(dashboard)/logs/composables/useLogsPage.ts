@@ -3,8 +3,15 @@ import { useLogs, Log } from "@/hooks/use-logs";
 import { useAlert } from "@/context/alert-context";
 
 export function useLogsPage() {
-  const { logs, loading, error, refreshLogs, deleteLog, deleteFolder } =
-    useLogs();
+  const {
+    logs,
+    loading,
+    error,
+    refreshLogs,
+    deleteLog,
+    deleteFolder,
+    updateFolder,
+  } = useLogs();
   const { showAlert } = useAlert();
 
   // Modal/Dialog States
@@ -13,11 +20,13 @@ export function useLogsPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleteFolderOpen, setIsDeleteFolderOpen] = useState(false);
+  const [isEditFolderOpen, setIsEditFolderOpen] = useState(false);
 
   // Selection States
   const [selectedLog, setSelectedLog] = useState<Log | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
+  const [folderToEdit, setFolderToEdit] = useState<string | null>(null);
   const [targetFolder, setTargetFolder] = useState<string>("General");
 
   // Loading States
@@ -51,6 +60,12 @@ export function useLogsPage() {
     setIsDeleteFolderOpen(true);
   };
 
+  const handleEditFolder = (folder: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFolderToEdit(folder);
+    setIsEditFolderOpen(true);
+  };
+
   const confirmDelete = async () => {
     if (!selectedLog) return;
     setDeleteLoading(true);
@@ -80,6 +95,19 @@ export function useLogsPage() {
     }
   };
 
+  const confirmEditFolder = async (oldName: string, newName: string) => {
+    try {
+      await updateFolder(oldName, newName);
+      await refreshLogs();
+      // Update selectedFolder if it was the one being edited
+      if (selectedFolder === oldName) {
+        setSelectedFolder(newName);
+      }
+    } catch {
+      throw new Error("Failed to update folder");
+    }
+  };
+
   return {
     // Data
     logs,
@@ -99,12 +127,15 @@ export function useLogsPage() {
     setIsDeleteOpen,
     isDeleteFolderOpen,
     setIsDeleteFolderOpen,
+    isEditFolderOpen,
+    setIsEditFolderOpen,
 
     // Selection States
     selectedLog,
     selectedFolder,
     setSelectedFolder,
     folderToDelete,
+    folderToEdit,
     targetFolder,
     setTargetFolder,
 
@@ -116,7 +147,9 @@ export function useLogsPage() {
     handleEdit,
     handleDelete,
     handleDeleteFolder,
+    handleEditFolder,
     confirmDelete,
     confirmDeleteFolder,
+    confirmEditFolder,
   };
 }
