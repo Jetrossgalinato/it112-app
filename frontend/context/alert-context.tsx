@@ -49,7 +49,10 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
             exit={{ opacity: 0, x: 20 }}
             className="fixed top-20 right-4 z-50 w-full max-w-sm"
           >
-            <Alert variant={alert.type}>
+            <Alert
+              variant={alert.type}
+              className="relative overflow-hidden pb-2"
+            >
               {alert.type === "destructive" ? (
                 <XCircle className="h-4 w-4" />
               ) : alert.type === "success" ? (
@@ -66,6 +69,12 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
                       : "Notification")}
               </AlertTitle>
               <AlertDescription>{alert.message}</AlertDescription>
+              <motion.div
+                initial={{ width: "100%" }}
+                animate={{ width: "0%" }}
+                transition={{ duration: 5, ease: "linear" }}
+                className="absolute bottom-0 left-0 h-1 bg-current opacity-30"
+              />
             </Alert>
           </motion.div>
         )}
