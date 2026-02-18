@@ -74,11 +74,30 @@ export function useLogs() {
     }
   };
 
+  const deleteFolder = async (folderName: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/logs/folder/${encodeURIComponent(folderName)}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete folder");
+      }
+      fetchLogs(); // Refresh logs after delete
+    } catch (err) {
+      console.error("Error deleting folder:", err);
+      throw err;
+    }
+  };
+
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
 
-  return { logs, loading, error, refreshLogs: fetchLogs, updateLog, deleteLog };
+  return { logs, loading, error, refreshLogs: fetchLogs, updateLog, deleteLog, deleteFolder };
 }
 
 export function useAddLog() {

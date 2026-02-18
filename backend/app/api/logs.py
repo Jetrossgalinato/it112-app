@@ -30,3 +30,8 @@ def delete_log(log_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Log not found")
     crud.delete_log(db=db, log_id=log_id)
     return db_log
+
+@router.delete("/folder/{folder_name}", status_code=204)
+def delete_folder(folder_name: str, db: Session = Depends(get_db)):
+    crud.delete_logs_by_folder(db=db, folder_name=folder_name)
+    return None

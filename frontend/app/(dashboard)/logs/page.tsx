@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { TypographyH3, TypographyMuted } from "@/components/typography";
 import { Button } from "@/components/ui/button";
-import { Plus, Folder, ArrowLeft, FolderPlus } from "lucide-react";
+import { Plus, Folder, ArrowLeft, FolderPlus, Trash } from "lucide-react";
 import { useLogs, Log } from "@/hooks/use-logs";
 import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
 import { AddFolderDialog } from "@/app/(dashboard)/logs/components/AddFolderDialog";
@@ -15,14 +15,17 @@ import { Export } from "@/app/(dashboard)/logs/components/Export";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function LogsPage() {
-  const { logs, loading, error, refreshLogs, deleteLog } = useLogs();
+  const { logs, loading, error, refreshLogs, deleteLog, deleteFolder } =
+    useLogs();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDeleteFolderOpen, setIsDeleteFolderOpen] = useState(false);
   const [selectedLog, setSelectedLog] = useState<Log | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
   const [targetFolder, setTargetFolder] = useState<string>("General");
   const { showAlert } = useAlert();
 
@@ -46,6 +49,12 @@ export default function LogsPage() {
     setIsDeleteOpen(true);
   };
 
+  const handleDeleteFolder = (folder: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFolderToDelete(folder);
+    setIsDeleteFolderOpen(true);
+  };
+
   const confirmDelete = async () => {
     if (!selectedLog) return;
     setDeleteLoading(true);
@@ -55,6 +64,21 @@ export default function LogsPage() {
       setIsDeleteOpen(false);
     } catch {
       showAlert("Failed to delete log", "destructive");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const confirmDeleteFolder = async () => {
+    if (!folderToDelete) return;
+    setDeleteLoading(true);
+    try {
+      await deleteFolder(folderToDelete);
+      showAlert(`Folder "${folderToDelete}" deleted successfully`, "success");
+      setIsDeleteFolderOpen(false);
+      setFolderToDelete(null);
+    } catch {
+      showAlert("Failed to delete folder", "destructive");
     } finally {
       setDeleteLoading(false);
     }
@@ -87,6 +111,22 @@ export default function LogsPage() {
         description="Are you sure you want to delete this log? This action cannot be undone."
         loading={deleteLoading}
       />
+      <DeleteDialog
+        isOpen={isDeleteFolderOpen}
+        onOpenChange={setIsDeleteFolderOpen}
+        onConfirm={confirmDeleteFolder}
+        title={
+          folderToDelete
+            ? `Delete Folder "${folderToDelete}"?`
+            : "Delete Folder"
+        }
+        description={
+          folderToDelete
+            ? `Are you sure you want to delete the folder "${folderToDelete}"? ALL logs within this folder will be permanently deleted. This action cannot be undone.`
+            : "Are you sure you want to delete this folder?"
+        }
+        loading={deleteLoading}
+      />
 
       {!selectedFolder ? (
         // Folder View
@@ -95,9 +135,7 @@ export default function LogsPage() {
             <TypographyH3>Logs Folders</TypographyH3>
             <TypographyMuted>Select a folder to view logs.</TypographyMuted>
             <div className="flex justify-end mt-4">
-              <Button
-                onClick={() => setIsFolderOpen(true)}
-              >
+              <Button onClick={() => setIsFolderOpen(true)}>
                 <FolderPlus className="mr-2 h-4 w-4" />
                 New Folder
               </Button>
@@ -111,14 +149,24 @@ export default function LogsPage() {
               {uniqueFolders.map((folder) => (
                 <Card
                   key={folder}
-                  className="cursor-pointer hover:bg-muted/50 transition-colors"
+                  className="cursor-pointer hover:bg-muted/50 transition-colors group relative"
                   onClick={() => setSelectedFolder(folder)}
                 >
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
+                    <CardTitle className="text-sm font-medium truncate pr-2 flex-1">
                       {folder}
                     </CardTitle>
-                    <Folder className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                        onClick={(e) => handleDeleteFolder(folder, e)}
+                      >
+                        <Trash className="h-3 w-3" />
+                      </Button>
+                      <Folder className="h-4 w-4 text-muted-foreground" />
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
