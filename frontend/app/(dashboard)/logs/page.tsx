@@ -1,88 +1,54 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { TypographyH3, TypographyMuted } from "@/components/typography";
 import { Button } from "@/components/ui/button";
-import { Plus, Folder, ArrowLeft, FolderPlus, Trash } from "lucide-react";
-import { useLogs, Log } from "@/hooks/use-logs";
+import { Plus, ArrowLeft, FolderPlus, Trash, Pencil } from "lucide-react";
 import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
 import { AddFolderDialog } from "@/app/(dashboard)/logs/components/AddFolderDialog";
 import { EditLogDialog } from "@/app/(dashboard)/logs/components/EditDialog";
+import { EditFolderDialog } from "@/app/(dashboard)/logs/components/EditFolderDialog";
 import { DeleteDialog } from "@/components/delete-dialog";
-import { useAlert } from "@/context/alert-context";
 import { LogsTable } from "@/app/(dashboard)/logs/components/LogsTable";
 import { Export } from "@/app/(dashboard)/logs/components/Export";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useLogsPage } from "@/app/(dashboard)/logs/composables/useLogsPage";
 
 export default function LogsPage() {
-  const { logs, loading, error, refreshLogs, deleteLog, deleteFolder } =
-    useLogs();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFolderOpen, setIsFolderOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [isDeleteFolderOpen, setIsDeleteFolderOpen] = useState(false);
-  const [selectedLog, setSelectedLog] = useState<Log | null>(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
-  const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
-  const [targetFolder, setTargetFolder] = useState<string>("General");
-  const { showAlert } = useAlert();
-
-  const uniqueFolders = useMemo(() => {
-    const folders = new Set(logs.map((log) => log.folder || "General"));
-    return Array.from(folders).sort();
-  }, [logs]);
-
-  const filteredLogs = useMemo(() => {
-    if (!selectedFolder) return [];
-    return logs.filter((log) => (log.folder || "General") === selectedFolder);
-  }, [logs, selectedFolder]);
-
-  const handleEdit = (log: Log) => {
-    setSelectedLog(log);
-    setIsEditOpen(true);
-  };
-
-  const handleDelete = (log: Log) => {
-    setSelectedLog(log);
-    setIsDeleteOpen(true);
-  };
-
-  const handleDeleteFolder = (folder: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setFolderToDelete(folder);
-    setIsDeleteFolderOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    if (!selectedLog) return;
-    setDeleteLoading(true);
-    try {
-      await deleteLog(selectedLog.id);
-      showAlert("Log deleted successfully", "success");
-      setIsDeleteOpen(false);
-    } catch {
-      showAlert("Failed to delete log", "destructive");
-    } finally {
-      setDeleteLoading(false);
-    }
-  };
-
-  const confirmDeleteFolder = async () => {
-    if (!folderToDelete) return;
-    setDeleteLoading(true);
-    try {
-      await deleteFolder(folderToDelete);
-      showAlert(`Folder "${folderToDelete}" deleted successfully`, "success");
-      setIsDeleteFolderOpen(false);
-      setFolderToDelete(null);
-    } catch {
-      showAlert("Failed to delete folder", "destructive");
-    } finally {
-      setDeleteLoading(false);
-    }
-  };
+  const {
+    logs,
+    loading,
+    error,
+    uniqueFolders,
+    filteredLogs,
+    isModalOpen,
+    setIsModalOpen,
+    isFolderOpen,
+    setIsFolderOpen,
+    isEditOpen,
+    setIsEditOpen,
+    isDeleteOpen,
+    setIsDeleteOpen,
+    isDeleteFolderOpen,
+    setIsDeleteFolderOpen,
+    isEditFolderOpen,
+    setIsEditFolderOpen,
+    selectedLog,
+    selectedFolder,
+    setSelectedFolder,
+    folderToDelete,
+    folderToEdit,
+    targetFolder,
+    setTargetFolder,
+    deleteLoading,
+    refreshLogs,
+    handleEdit,
+    handleDelete,
+    handleDeleteFolder,
+    handleEditFolder,
+    confirmDelete,
+    confirmDeleteFolder,
+    confirmEditFolder,
+  } = useLogsPage();
 
   return (
     <div className="p-4 space-y-4">
@@ -127,6 +93,12 @@ export default function LogsPage() {
         }
         loading={deleteLoading}
       />
+      <EditFolderDialog
+        isOpen={isEditFolderOpen}
+        onOpenChange={setIsEditFolderOpen}
+        currentFolderName={folderToEdit}
+        onFolderUpdated={confirmEditFolder}
+      />
 
       {!selectedFolder ? (
         // Folder View
@@ -160,12 +132,19 @@ export default function LogsPage() {
                       <Button
                         variant="ghost"
                         size="icon"
+                        className="h-6 w-6 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                        onClick={(e) => handleEditFolder(folder, e)}
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                         onClick={(e) => handleDeleteFolder(folder, e)}
                       >
                         <Trash className="h-3 w-3" />
                       </Button>
-                      <Folder className="h-4 w-4 text-muted-foreground" />
                     </div>
                   </CardHeader>
                   <CardContent>

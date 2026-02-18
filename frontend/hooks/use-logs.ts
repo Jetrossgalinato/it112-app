@@ -93,11 +93,43 @@ export function useLogs() {
     }
   };
 
+  const updateFolder = async (oldFolderName: string, newFolderName: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/logs/folder/${encodeURIComponent(oldFolderName)}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ new_folder_name: newFolderName }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update folder");
+      }
+      fetchLogs(); // Refresh logs after update
+    } catch (err) {
+      console.error("Error updating folder:", err);
+      throw err;
+    }
+  };
+
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
 
-  return { logs, loading, error, refreshLogs: fetchLogs, updateLog, deleteLog, deleteFolder };
+  return {
+    logs,
+    loading,
+    error,
+    refreshLogs: fetchLogs,
+    updateLog,
+    deleteLog,
+    deleteFolder,
+    updateFolder,
+  };
 }
 
 export function useAddLog() {
