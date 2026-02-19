@@ -28,6 +28,7 @@ interface EditLogDialogProps {
   onOpenChange: (open: boolean) => void;
   log: Log | null;
   onLogUpdated: () => void;
+  folders?: string[];
 }
 
 export function EditLogDialog({
@@ -35,6 +36,7 @@ export function EditLogDialog({
   onOpenChange,
   log,
   onLogUpdated,
+  folders = [],
 }: EditLogDialogProps) {
   const [activity, setActivity] = useState("");
   const [duration, setDuration] = useState("");
@@ -85,13 +87,30 @@ export function EditLogDialog({
               <Label htmlFor="edit-folder" className="text-right">
                 Folder
               </Label>
-              <Input
-                id="edit-folder"
-                value={folder}
-                onChange={(e) => setFolder(e.target.value)}
-                className="col-span-3"
-                required
-              />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="col-span-3 justify-between"
+                  >
+                    {folder || "Select Folder"}
+                    <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[200px]" align="start">
+                  {folders.length > 0 ? (
+                    folders.map((f) => (
+                      <DropdownMenuItem key={f} onSelect={() => setFolder(f)}>
+                        {f}
+                      </DropdownMenuItem>
+                    ))
+                  ) : (
+                    <DropdownMenuItem disabled>
+                      No folders available
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-activity" className="text-right">

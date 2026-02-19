@@ -69,6 +69,7 @@ export default function LogsPage() {
         onOpenChange={setIsEditOpen}
         log={selectedLog}
         onLogUpdated={refreshLogs}
+        folders={uniqueFolders}
       />
       <DeleteDialog
         isOpen={isDeleteOpen}
