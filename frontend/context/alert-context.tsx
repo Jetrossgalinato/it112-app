@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, XCircle, X } from "lucide-react";
 
 type AlertType = "default" | "destructive" | "success";
 
@@ -60,7 +60,7 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
                 className="absolute top-2 right-2 z-10 rounded-full p-1 text-muted-foreground hover:bg-accent hover:text-foreground focus:outline-none"
                 type="button"
               >
-                <XCircle className="h-5 w-5" />
+                <X className="h-3 w-3" />
               </button>
               {alert.type === "destructive" ? (
                 <XCircle className="h-4 w-4" />
