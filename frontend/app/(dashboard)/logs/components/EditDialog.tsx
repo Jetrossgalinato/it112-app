@@ -16,7 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAlert } from "@/context/alert-context";
 import { useLogs, Log } from "@/hooks/use-logs";
@@ -39,7 +38,8 @@ export function EditLogDialog({
   folders = [],
 }: EditLogDialogProps) {
   const [activity, setActivity] = useState("");
-  const [duration, setDuration] = useState("");
+  const [hours, setHours] = useState("");
+  const [minutes, setMinutes] = useState("");
   const [status, setStatus] = useState("");
   const [folder, setFolder] = useState("");
   const { updateLog } = useLogs();
@@ -49,7 +49,15 @@ export function EditLogDialog({
   useEffect(() => {
     if (log) {
       setActivity(log.activity);
-      setDuration(log.duration);
+      // Parse duration string e.g. "2h 30m" into hours and minutes
+      const match = log.duration.match(/(\d+)h\s*(\d+)m/);
+      if (match) {
+        setHours(String(Number(match[1])));
+        setMinutes(String(Number(match[2])));
+      } else {
+        setHours("0");
+        setMinutes("0");
+      }
       setStatus(log.status);
       setFolder(log.folder || "General");
     }
@@ -61,6 +69,16 @@ export function EditLogDialog({
 
     setLoading(true);
     try {
+      // Require at least one of hours or minutes to be non-zero
+      if (
+        (hours === "" || Number(hours) === 0) &&
+        (minutes === "" || Number(minutes) === 0)
+      ) {
+        showAlert("Duration is required.", "destructive");
+        setLoading(false);
+        return;
+      }
+      const duration = `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
       await updateLog(log.id, { activity, duration, status, folder });
       onLogUpdated();
       onOpenChange(false);
@@ -125,17 +143,47 @@ export function EditLogDialog({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-duration" className="text-right">
-                Duration
-              </Label>
-              <Input
-                id="edit-duration"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-                className="col-span-3"
-                placeholder="e.g. 1h 30m"
-                required
-              />
+              <Label className="text-right">Duration</Label>
+              <div className="col-span-3 flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    min={0}
+                    max={23}
+                    value={hours}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "") {
+                        setHours("");
+                        return;
+                      }
+                      setHours(String(Math.max(0, Math.min(23, Number(val)))));
+                    }}
+                    className="w-16 rounded-md border border-input bg-background px-2 py-1.5 text-sm text-center shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  />
+                  <span className="text-sm text-muted-foreground">h</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    min={0}
+                    max={59}
+                    value={minutes}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "") {
+                        setMinutes("");
+                        return;
+                      }
+                      setMinutes(
+                        String(Math.max(0, Math.min(59, Number(val)))),
+                      );
+                    }}
+                    className="w-16 rounded-md border border-input bg-background px-2 py-1.5 text-sm text-center shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  />
+                  <span className="text-sm text-muted-foreground">m</span>
+                </div>
+              </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-status" className="text-right">
