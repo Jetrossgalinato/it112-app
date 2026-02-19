@@ -53,6 +53,15 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
               variant={alert.type}
               className="relative overflow-hidden pb-2"
             >
+              {/* Close (X) button */}
+              <button
+                onClick={hideAlert}
+                aria-label="Close alert"
+                className="absolute top-2 right-2 z-10 rounded-full p-1 text-muted-foreground hover:bg-accent hover:text-foreground focus:outline-none"
+                type="button"
+              >
+                <XCircle className="h-5 w-5" />
+              </button>
               {alert.type === "destructive" ? (
                 <XCircle className="h-4 w-4" />
               ) : alert.type === "success" ? (
