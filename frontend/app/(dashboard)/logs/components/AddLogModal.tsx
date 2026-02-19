@@ -119,15 +119,15 @@ export function AddLogModal({
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="activity" className="text-right">
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="activity" className="text-right pt-2">
                 Activity
               </Label>
-              <Input
+              <textarea
                 id="activity"
                 value={activity}
                 onChange={(e) => setActivity(e.target.value)}
-                className="col-span-3"
+                className="col-span-3 min-h-[100px] max-h-[200px] resize-y rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring overflow-y-auto"
                 required
               />
             </div>
