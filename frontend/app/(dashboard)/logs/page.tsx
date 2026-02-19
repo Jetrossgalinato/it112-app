@@ -57,6 +57,7 @@ export default function LogsPage() {
         onOpenChange={setIsModalOpen}
         onLogAdded={refreshLogs}
         defaultFolder={targetFolder}
+        folders={uniqueFolders}
       />
       <AddFolderDialog
         isOpen={isFolderOpen}
@@ -68,6 +69,7 @@ export default function LogsPage() {
         onOpenChange={setIsEditOpen}
         log={selectedLog}
         onLogUpdated={refreshLogs}
+        folders={uniqueFolders}
       />
       <DeleteDialog
         isOpen={isDeleteOpen}
