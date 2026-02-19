@@ -16,7 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAlert } from "@/context/alert-context";
 import { useAddLog } from "@/hooks/use-logs";
@@ -39,7 +38,8 @@ export function AddLogModal({
   folders = [],
 }: AddLogModalProps) {
   const [activity, setActivity] = useState("");
-  const [duration, setDuration] = useState("");
+  const [hours, setHours] = useState("");
+  const [minutes, setMinutes] = useState("");
   const [status, setStatus] = useState("");
   const [folder, setFolder] = useState(defaultFolder);
   const { addLog, loading } = useAddLog();
@@ -54,7 +54,8 @@ export function AddLogModal({
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       setActivity("");
-      setDuration("");
+      setHours("");
+      setMinutes("");
       setStatus("");
     }
     onOpenChange(open);
@@ -63,9 +64,19 @@ export function AddLogModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Require at least one of hours or minutes to be non-empty and non-zero
+    if (
+      (hours === "" || Number(hours) === 0) &&
+      (minutes === "" || Number(minutes) === 0)
+    ) {
+      showAlert("Duration is required.", "destructive");
+      return;
+    }
+
     try {
       // Ensure folder is not empty, default to "General" if user cleared it
       const folderToSave = folder.trim() === "" ? "General" : folder;
+      const duration = `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
 
       await addLog(activity, duration, status, folderToSave);
 
@@ -132,17 +143,47 @@ export function AddLogModal({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="duration" className="text-right">
-                Duration
-              </Label>
-              <Input
-                id="duration"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-                className="col-span-3"
-                placeholder="e.g. 1h 30m"
-                required
-              />
+              <Label className="text-right">Duration</Label>
+              <div className="col-span-3 flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    min={0}
+                    max={23}
+                    value={hours}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "") {
+                        setHours("");
+                        return;
+                      }
+                      setHours(String(Math.max(0, Math.min(23, Number(val)))));
+                    }}
+                    className="w-16 rounded-md border border-input bg-background px-2 py-1.5 text-sm text-center shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  />
+                  <span className="text-sm text-muted-foreground">h</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    min={0}
+                    max={59}
+                    value={minutes}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "") {
+                        setMinutes("");
+                        return;
+                      }
+                      setMinutes(
+                        String(Math.max(0, Math.min(59, Number(val)))),
+                      );
+                    }}
+                    className="w-16 rounded-md border border-input bg-background px-2 py-1.5 text-sm text-center shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  />
+                  <span className="text-sm text-muted-foreground">m</span>
+                </div>
+              </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="status" className="text-right">
