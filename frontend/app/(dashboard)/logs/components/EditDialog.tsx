@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,10 +16,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { useAlert } from "@/context/alert-context";
-import { useLogs, Log } from "@/hooks/use-logs";
+import { Log } from "@/hooks/use-logs";
 import { ChevronDown } from "lucide-react";
 import { getStatusColor } from "@/lib/helpers";
+import { useEditLogDialog } from "../composables/useEditLogDialog";
 
 interface EditLogDialogProps {
   isOpen: boolean;
@@ -37,60 +36,22 @@ export function EditLogDialog({
   onLogUpdated,
   folders = [],
 }: EditLogDialogProps) {
-  const [activity, setActivity] = useState("");
-  const [title, setTitle] = useState("");
-  const [hours, setHours] = useState("");
-  const [minutes, setMinutes] = useState("");
-  const [status, setStatus] = useState("");
-  const [folder, setFolder] = useState("");
-  const { updateLog } = useLogs();
-  const { showAlert } = useAlert();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (log) {
-      setActivity(log.activity);
-      setTitle(log.title || "");
-      // Parse duration string e.g. "2h 30m" into hours and minutes
-      const match = log.duration ? log.duration.match(/(\d+)h\s*(\d+)m/) : null;
-      if (match) {
-        setHours(String(Number(match[1])));
-        setMinutes(String(Number(match[2])));
-      } else {
-        setHours("");
-        setMinutes("");
-      }
-      setStatus(log.status);
-      setFolder(log.folder || "General");
-    }
-  }, [log]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!log) return;
-
-    setLoading(true);
-    try {
-      const duration =
-        hours === "" && minutes === ""
-          ? null
-          : `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
-      await updateLog(log.id, {
-        title,
-        activity,
-        duration: duration ?? undefined,
-        status,
-        folder,
-      });
-      onLogUpdated();
-      onOpenChange(false);
-      showAlert("Log updated successfully!", "success");
-    } catch {
-      showAlert("Failed to update log. Please try again.", "destructive");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    activity,
+    setActivity,
+    title,
+    setTitle,
+    hours,
+    setHours,
+    minutes,
+    setMinutes,
+    status,
+    setStatus,
+    folder,
+    setFolder,
+    loading,
+    handleSubmit,
+  } = useEditLogDialog({ log, onOpenChange, onLogUpdated });
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

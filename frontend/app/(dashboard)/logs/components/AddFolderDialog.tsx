@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,8 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAlert } from "@/context/alert-context";
-import { useAddLog } from "@/hooks/use-logs";
+import { useAddFolderDialog } from "../composables/useAddFolderDialog";
 
 interface AddFolderDialogProps {
   isOpen: boolean;
@@ -26,42 +24,8 @@ export function AddFolderDialog({
   onOpenChange,
   onFolderAdded,
 }: AddFolderDialogProps) {
-  const [folderName, setFolderName] = useState("");
-  const { addLog, loading } = useAddLog();
-  const { showAlert } = useAlert();
-
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      setFolderName("");
-    }
-    onOpenChange(open);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!folderName.trim()) {
-      showAlert("Folder name cannot be empty.", "destructive");
-      return;
-    }
-
-    try {
-      // Create a placeholder log to initialize the folder
-      await addLog(
-        "Folder Created", // Placeholder activity
-        "0m",            // Placeholder duration
-        "Completed",     // Placeholder status
-        folderName.trim()
-      );
-
-      onFolderAdded();
-      handleOpenChange(false);
-      showAlert(`Folder "${folderName}" created successfully!`, "success");
-    } catch (error) {
-      console.error("Failed to create folder:", error);
-      showAlert("Failed to create folder. Please try again.", "destructive");
-    }
-  };
+  const { folderName, setFolderName, loading, handleOpenChange, handleSubmit } =
+    useAddFolderDialog({ onOpenChange, onFolderAdded });
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -69,7 +33,8 @@ export function AddFolderDialog({
         <DialogHeader>
           <DialogTitle>Create New Folder</DialogTitle>
           <DialogDescription>
-            Enter a name for the new folder. This will create an initial log entry to establish the folder.
+            Enter a name for the new folder. This will create an initial log
+            entry to establish the folder.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>

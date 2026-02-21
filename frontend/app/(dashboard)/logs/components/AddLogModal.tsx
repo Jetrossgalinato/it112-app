@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,10 +16,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { useAlert } from "@/context/alert-context";
-import { useAddLog } from "@/hooks/use-logs";
 import { ChevronDown } from "lucide-react";
 import { getStatusColor } from "@/lib/helpers";
+import { useAddLogModal } from "../composables/useAddLogModal";
 
 interface AddLogModalProps {
   isOpen: boolean;
@@ -37,53 +35,23 @@ export function AddLogModal({
   defaultFolder = "General",
   folders = [],
 }: AddLogModalProps) {
-  const [activity, setActivity] = useState("");
-  const [title, setTitle] = useState("");
-  const [hours, setHours] = useState("");
-  const [minutes, setMinutes] = useState("");
-  const [status, setStatus] = useState("");
-  const [folder, setFolder] = useState(defaultFolder);
-  const { addLog, loading } = useAddLog();
-  const { showAlert } = useAlert();
-
-  // Update folder when defaultFolder changes
-  useEffect(() => {
-    setFolder(defaultFolder);
-  }, [defaultFolder]);
-
-  // Reset form when dialog closes
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      setActivity("");
-      setTitle("");
-      setHours("");
-      setMinutes("");
-      setStatus("");
-    }
-    onOpenChange(open);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      // Ensure folder is not empty, default to "General" if user cleared it
-      const folderToSave = folder.trim() === "" ? "General" : folder;
-      const duration =
-        hours === "" && minutes === ""
-          ? ""
-          : `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
-
-      await addLog(title, activity, duration, status, folderToSave);
-
-      onLogAdded();
-      handleOpenChange(false);
-      showAlert("Log added successfully!", "success");
-    } catch (error) {
-      console.error("Failed to add log:", error);
-      showAlert("Failed to add log. Please try again.", "destructive");
-    }
-  };
+  const {
+    activity,
+    setActivity,
+    title,
+    setTitle,
+    hours,
+    setHours,
+    minutes,
+    setMinutes,
+    status,
+    setStatus,
+    folder,
+    setFolder,
+    loading,
+    handleOpenChange,
+    handleSubmit,
+  } = useAddLogModal({ defaultFolder, onOpenChange, onLogAdded });
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
