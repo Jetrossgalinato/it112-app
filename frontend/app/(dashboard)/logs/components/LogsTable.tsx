@@ -70,7 +70,11 @@ export function LogsTable({
               {logs.map((log) => (
                 <TableRow key={log.id}>
                   <TableCell>{formatTime(log.timestamp)}</TableCell>
-                  <TableCell>{log.activity}</TableCell>
+                  <TableCell className="max-w-xs">
+                    <div className="truncate" title={log.activity}>
+                      {log.activity}
+                    </div>
+                  </TableCell>
                   <TableCell>{log.duration}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(log.status)}>
