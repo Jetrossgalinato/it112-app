@@ -50,6 +50,7 @@ def get_logs(db: Session, skip: int = 0, limit: int = 100):
 
 def create_log(db: Session, log: log_schemas.LogCreate):
     db_log = log_models.Log(
+        title=log.title,
         activity=log.activity,
         duration=log.duration,
         status=log.status,
@@ -67,6 +68,7 @@ def get_log(db: Session, log_id: int):
 def update_log(db: Session, log_id: int, log: log_schemas.LogCreate):
     db_log = get_log(db, log_id)
     if db_log:
+        db_log.title = log.title
         db_log.activity = log.activity
         db_log.duration = log.duration
         db_log.status = log.status
