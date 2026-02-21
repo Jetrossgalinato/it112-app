@@ -27,7 +27,13 @@ export function useAddFolderDialog({
       return;
     }
     try {
-      await addLog("Folder Created", "0m", "Completed", folderName.trim());
+      await addLog(
+        "Folder Created",
+        "Initial Log Entry",
+        "0m",
+        "Completed",
+        folderName.trim(),
+      );
       onFolderAdded();
       handleOpenChange(false);
       showAlert(`Folder "${folderName}" created successfully!`, "success");
