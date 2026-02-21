@@ -4,7 +4,7 @@ export interface Log {
   id: number;
   title?: string;
   activity: string;
-  duration: string;
+  duration?: string;
   status: string;
   folder?: string;
   timestamp: string;
@@ -155,7 +155,7 @@ export function useAddLog() {
         body: JSON.stringify({
           title,
           activity,
-          duration,
+          duration: duration || null,
           status,
           folder,
         }),

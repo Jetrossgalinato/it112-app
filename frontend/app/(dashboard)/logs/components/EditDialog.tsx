@@ -52,13 +52,13 @@ export function EditLogDialog({
       setActivity(log.activity);
       setTitle(log.title || "");
       // Parse duration string e.g. "2h 30m" into hours and minutes
-      const match = log.duration.match(/(\d+)h\s*(\d+)m/);
+      const match = log.duration ? log.duration.match(/(\d+)h\s*(\d+)m/) : null;
       if (match) {
         setHours(String(Number(match[1])));
         setMinutes(String(Number(match[2])));
       } else {
-        setHours("0");
-        setMinutes("0");
+        setHours("");
+        setMinutes("");
       }
       setStatus(log.status);
       setFolder(log.folder || "General");
@@ -71,17 +71,17 @@ export function EditLogDialog({
 
     setLoading(true);
     try {
-      // Require at least one of hours or minutes to be non-zero
-      if (
-        (hours === "" || Number(hours) === 0) &&
-        (minutes === "" || Number(minutes) === 0)
-      ) {
-        showAlert("Duration is required.", "destructive");
-        setLoading(false);
-        return;
-      }
-      const duration = `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
-      await updateLog(log.id, { title, activity, duration, status, folder });
+      const duration =
+        hours === "" && minutes === ""
+          ? null
+          : `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
+      await updateLog(log.id, {
+        title,
+        activity,
+        duration: duration ?? undefined,
+        status,
+        folder,
+      });
       onLogUpdated();
       onOpenChange(false);
       showAlert("Log updated successfully!", "success");

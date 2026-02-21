@@ -77,7 +77,7 @@ export function LogsTable({
                       {log.activity}
                     </div>
                   </TableCell>
-                  <TableCell>{log.duration}</TableCell>
+                  <TableCell>{log.duration || "-"}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(log.status)}>
                       {log.status}

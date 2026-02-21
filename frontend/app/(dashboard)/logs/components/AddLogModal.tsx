@@ -66,19 +66,13 @@ export function AddLogModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Require at least one of hours or minutes to be non-empty and non-zero
-    if (
-      (hours === "" || Number(hours) === 0) &&
-      (minutes === "" || Number(minutes) === 0)
-    ) {
-      showAlert("Duration is required.", "destructive");
-      return;
-    }
-
     try {
       // Ensure folder is not empty, default to "General" if user cleared it
       const folderToSave = folder.trim() === "" ? "General" : folder;
-      const duration = `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
+      const duration =
+        hours === "" && minutes === ""
+          ? ""
+          : `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
 
       await addLog(title, activity, duration, status, folderToSave);
 

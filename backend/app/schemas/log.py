@@ -5,7 +5,7 @@ from typing import Optional
 class LogBase(BaseModel):
     title: Optional[str] = None
     activity: str
-    duration: str
+    duration: Optional[str] = None
     status: str
     folder: Optional[str] = "General"
     timestamp: Optional[datetime] = None
