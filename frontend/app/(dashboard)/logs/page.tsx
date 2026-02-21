@@ -6,6 +6,7 @@ import { Plus, ArrowLeft, FolderPlus, Trash, Pencil } from "lucide-react";
 import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
 import { AddFolderDialog } from "@/app/(dashboard)/logs/components/AddFolderDialog";
 import { EditLogDialog } from "@/app/(dashboard)/logs/components/EditDialog";
+import { ViewLogDialog } from "@/app/(dashboard)/logs/components/ViewLogDialog";
 import { EditFolderDialog } from "@/app/(dashboard)/logs/components/EditFolderDialog";
 import { DeleteDialog } from "@/components/delete-dialog";
 import { LogsTable } from "@/app/(dashboard)/logs/components/LogsTable";
@@ -26,6 +27,8 @@ export default function LogsPage() {
     setIsFolderOpen,
     isEditOpen,
     setIsEditOpen,
+    isViewOpen,
+    setIsViewOpen,
     isDeleteOpen,
     setIsDeleteOpen,
     isDeleteFolderOpen,
@@ -41,6 +44,7 @@ export default function LogsPage() {
     setTargetFolder,
     deleteLoading,
     refreshLogs,
+    handleView,
     handleEdit,
     handleDelete,
     handleDeleteFolder,
@@ -70,6 +74,11 @@ export default function LogsPage() {
         log={selectedLog}
         onLogUpdated={refreshLogs}
         folders={uniqueFolders}
+      />
+      <ViewLogDialog
+        isOpen={isViewOpen}
+        onOpenChange={setIsViewOpen}
+        log={selectedLog}
       />
       <DeleteDialog
         isOpen={isDeleteOpen}
@@ -205,6 +214,7 @@ export default function LogsPage() {
             logs={filteredLogs}
             loading={loading}
             error={error}
+            onView={handleView}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
