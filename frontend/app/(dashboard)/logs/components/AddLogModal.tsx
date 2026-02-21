@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,10 +16,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { useAlert } from "@/context/alert-context";
-import { useAddLog } from "@/hooks/use-logs";
 import { ChevronDown } from "lucide-react";
 import { getStatusColor } from "@/lib/helpers";
+import { useAddLogModal } from "../composables/useAddLogModal";
 
 interface AddLogModalProps {
   isOpen: boolean;
@@ -37,57 +35,23 @@ export function AddLogModal({
   defaultFolder = "General",
   folders = [],
 }: AddLogModalProps) {
-  const [activity, setActivity] = useState("");
-  const [hours, setHours] = useState("");
-  const [minutes, setMinutes] = useState("");
-  const [status, setStatus] = useState("");
-  const [folder, setFolder] = useState(defaultFolder);
-  const { addLog, loading } = useAddLog();
-  const { showAlert } = useAlert();
-
-  // Update folder when defaultFolder changes
-  useEffect(() => {
-    setFolder(defaultFolder);
-  }, [defaultFolder]);
-
-  // Reset form when dialog closes
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      setActivity("");
-      setHours("");
-      setMinutes("");
-      setStatus("");
-    }
-    onOpenChange(open);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Require at least one of hours or minutes to be non-empty and non-zero
-    if (
-      (hours === "" || Number(hours) === 0) &&
-      (minutes === "" || Number(minutes) === 0)
-    ) {
-      showAlert("Duration is required.", "destructive");
-      return;
-    }
-
-    try {
-      // Ensure folder is not empty, default to "General" if user cleared it
-      const folderToSave = folder.trim() === "" ? "General" : folder;
-      const duration = `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
-
-      await addLog(activity, duration, status, folderToSave);
-
-      onLogAdded();
-      handleOpenChange(false);
-      showAlert("Log added successfully!", "success");
-    } catch (error) {
-      console.error("Failed to add log:", error);
-      showAlert("Failed to add log. Please try again.", "destructive");
-    }
-  };
+  const {
+    activity,
+    setActivity,
+    title,
+    setTitle,
+    hours,
+    setHours,
+    minutes,
+    setMinutes,
+    status,
+    setStatus,
+    folder,
+    setFolder,
+    loading,
+    handleOpenChange,
+    handleSubmit,
+  } = useAddLogModal({ defaultFolder, onOpenChange, onLogAdded });
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -129,6 +93,19 @@ export function AddLogModal({
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Title
+              </Label>
+              <input
+                id="title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="col-span-3 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                placeholder="Short title for this activity"
+              />
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
               <Label htmlFor="activity" className="text-right pt-2">

@@ -17,6 +17,7 @@ export function useLogsPage() {
   // Modal/Dialog States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFolderOpen, setIsFolderOpen] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleteFolderOpen, setIsDeleteFolderOpen] = useState(false);
@@ -44,6 +45,11 @@ export function useLogsPage() {
   }, [logs, selectedFolder]);
 
   // Event Handlers
+  const handleView = (log: Log) => {
+    setSelectedLog(log);
+    setIsViewOpen(true);
+  };
+
   const handleEdit = (log: Log) => {
     setSelectedLog(log);
     setIsEditOpen(true);
@@ -121,6 +127,8 @@ export function useLogsPage() {
     setIsModalOpen,
     isFolderOpen,
     setIsFolderOpen,
+    isViewOpen,
+    setIsViewOpen,
     isEditOpen,
     setIsEditOpen,
     isDeleteOpen,
@@ -144,6 +152,7 @@ export function useLogsPage() {
 
     // Methods
     refreshLogs,
+    handleView,
     handleEdit,
     handleDelete,
     handleDeleteFolder,

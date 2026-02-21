@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Log } from "@/hooks/use-logs";
 import { getStatusColor } from "@/lib/helpers";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +19,7 @@ interface LogsTableProps {
   logs: Log[];
   loading: boolean;
   error: string | null;
+  onView: (log: Log) => void;
   onEdit: (log: Log) => void;
   onDelete: (log: Log) => void;
 }
@@ -27,6 +28,7 @@ export function LogsTable({
   logs,
   loading,
   error,
+  onView,
   onEdit,
   onDelete,
 }: LogsTableProps) {
@@ -60,6 +62,7 @@ export function LogsTable({
             <TableHeader>
               <TableRow>
                 <TableHead>Date & Time</TableHead>
+                <TableHead>Title</TableHead>
                 <TableHead>Activity</TableHead>
                 <TableHead>Duration</TableHead>
                 <TableHead>Status</TableHead>
@@ -70,8 +73,13 @@ export function LogsTable({
               {logs.map((log) => (
                 <TableRow key={log.id}>
                   <TableCell>{formatTime(log.timestamp)}</TableCell>
-                  <TableCell>{log.activity}</TableCell>
-                  <TableCell>{log.duration}</TableCell>
+                  <TableCell>{log.title || "-"}</TableCell>
+                  <TableCell className="max-w-xs">
+                    <div className="truncate" title={log.activity}>
+                      {log.activity}
+                    </div>
+                  </TableCell>
+                  <TableCell>{log.duration || "-"}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(log.status)}>
                       {log.status}
@@ -79,6 +87,13 @@ export function LogsTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onView(log)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

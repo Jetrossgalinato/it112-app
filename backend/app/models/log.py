@@ -6,6 +6,7 @@ class Log(Base):
     __tablename__ = "logs"
 
     id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True, nullable=True)
     activity = Column(String, index=True)
     duration = Column(String)
     status = Column(String)

@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 
 export interface Log {
   id: number;
+  title?: string;
   activity: string;
-  duration: string;
+  duration?: string;
   status: string;
   folder?: string;
   timestamp: string;
@@ -137,6 +138,7 @@ export function useAddLog() {
   const [error, setError] = useState<string | null>(null);
 
   const addLog = async (
+    title: string,
     activity: string,
     duration: string,
     status: string,
@@ -151,8 +153,9 @@ export function useAddLog() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          title,
           activity,
-          duration,
+          duration: duration || null,
           status,
           folder,
         }),

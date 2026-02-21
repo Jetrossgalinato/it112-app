@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAlert } from "@/context/alert-context";
+import { useEditFolderDialog } from "../composables/useEditFolderDialog";
 
 interface EditFolderDialogProps {
   isOpen: boolean;
@@ -27,56 +26,8 @@ export function EditFolderDialog({
   currentFolderName,
   onFolderUpdated,
 }: EditFolderDialogProps) {
-  const [folderName, setFolderName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { showAlert } = useAlert();
-
-  useEffect(() => {
-    if (currentFolderName) {
-      setFolderName(currentFolderName);
-    }
-  }, [currentFolderName]);
-
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      setFolderName("");
-    }
-    onOpenChange(open);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!folderName.trim()) {
-      showAlert("Folder name cannot be empty.", "destructive");
-      return;
-    }
-
-    if (!currentFolderName) {
-      showAlert("No folder selected for editing.", "destructive");
-      return;
-    }
-
-    if (folderName.trim() === currentFolderName) {
-      showAlert("Please provide a different folder name.", "destructive");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await onFolderUpdated(currentFolderName, folderName.trim());
-      handleOpenChange(false);
-      showAlert(
-        `Folder renamed to "${folderName.trim()}" successfully!`,
-        "success",
-      );
-    } catch (error) {
-      console.error("Failed to update folder:", error);
-      showAlert("Failed to update folder. Please try again.", "destructive");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { folderName, setFolderName, loading, handleOpenChange, handleSubmit } =
+    useEditFolderDialog({ currentFolderName, onOpenChange, onFolderUpdated });
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
