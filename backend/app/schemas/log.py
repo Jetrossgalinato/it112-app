@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 class LogBase(BaseModel):
+    title: Optional[str] = None
     activity: str
     duration: str
     status: str

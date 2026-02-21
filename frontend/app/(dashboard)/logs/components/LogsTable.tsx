@@ -60,6 +60,7 @@ export function LogsTable({
             <TableHeader>
               <TableRow>
                 <TableHead>Date & Time</TableHead>
+                <TableHead>Title</TableHead>
                 <TableHead>Activity</TableHead>
                 <TableHead>Duration</TableHead>
                 <TableHead>Status</TableHead>
@@ -70,6 +71,7 @@ export function LogsTable({
               {logs.map((log) => (
                 <TableRow key={log.id}>
                   <TableCell>{formatTime(log.timestamp)}</TableCell>
+                  <TableCell>{log.title || "-"}</TableCell>
                   <TableCell className="max-w-xs">
                     <div className="truncate" title={log.activity}>
                       {log.activity}

@@ -38,6 +38,7 @@ export function AddLogModal({
   folders = [],
 }: AddLogModalProps) {
   const [activity, setActivity] = useState("");
+  const [title, setTitle] = useState("");
   const [hours, setHours] = useState("");
   const [minutes, setMinutes] = useState("");
   const [status, setStatus] = useState("");
@@ -54,6 +55,7 @@ export function AddLogModal({
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       setActivity("");
+      setTitle("");
       setHours("");
       setMinutes("");
       setStatus("");
@@ -78,7 +80,7 @@ export function AddLogModal({
       const folderToSave = folder.trim() === "" ? "General" : folder;
       const duration = `${Number(hours) || 0}h ${Number(minutes) || 0}m`;
 
-      await addLog(activity, duration, status, folderToSave);
+      await addLog(title, activity, duration, status, folderToSave);
 
       onLogAdded();
       handleOpenChange(false);
@@ -129,6 +131,19 @@ export function AddLogModal({
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Title
+              </Label>
+              <input
+                id="title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="col-span-3 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                placeholder="Short title for this activity"
+              />
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
               <Label htmlFor="activity" className="text-right pt-2">
