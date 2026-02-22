@@ -3,6 +3,12 @@
 import { TypographyH3, TypographyMuted } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowLeft, FolderPlus, Trash, Pencil } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { AddLogModal } from "@/app/(dashboard)/logs/components/AddLogModal";
 import { AddFolderDialog } from "@/app/(dashboard)/logs/components/AddFolderDialog";
 import { EditLogDialog } from "@/app/(dashboard)/logs/components/EditDialog";
@@ -139,24 +145,36 @@ export default function LogsPage() {
                     <CardTitle className="text-sm font-medium truncate pr-2 flex-1">
                       {folder}
                     </CardTitle>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                        onClick={(e) => handleEditFolder(folder, e)}
-                      >
-                        <Pencil className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                        onClick={(e) => handleDeleteFolder(folder, e)}
-                      >
-                        <Trash className="h-3 w-3" />
-                      </Button>
-                    </div>
+                    <TooltipProvider>
+                      <div className="flex items-center gap-1">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                              onClick={(e) => handleEditFolder(folder, e)}
+                            >
+                              <Pencil className="h-3 w-3" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Edit</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                              onClick={(e) => handleDeleteFolder(folder, e)}
+                            >
+                              <Trash className="h-3 w-3" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Delete</TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </TooltipProvider>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
