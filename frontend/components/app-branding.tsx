@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { GalleryVerticalEnd } from "lucide-react"
+import * as React from "react";
+import { GalleryVerticalEnd } from "lucide-react";
 
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function AppBranding() {
   return (
@@ -18,11 +18,11 @@ export function AppBranding() {
             <GalleryVerticalEnd className="size-4" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">IT112</span>
-            <span className="truncate text-xs">Internal System</span>
+            <span className="truncate font-semibold">JetLog</span>
+            <span className="truncate text-xs">Logging System</span>
           </div>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }
